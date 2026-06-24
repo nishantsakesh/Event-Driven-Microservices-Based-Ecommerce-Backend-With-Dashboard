@@ -1,7 +1,6 @@
 package com.ecommerce.auth_service.service;
 
-import com.ecommerce.auth_service.dto.RegisterRequest;
-import com.ecommerce.auth_service.dto.RegisterResponse;
+import com.ecommerce.auth_service.dto.*;
 import com.ecommerce.auth_service.entity.Role;
 import com.ecommerce.auth_service.entity.User;
 import com.ecommerce.auth_service.repository.UserRepository;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 
-import com.ecommerce.auth_service.dto.LoginRequest;
-import com.ecommerce.auth_service.dto.LoginResponse;
 import com.ecommerce.auth_service.security.JwtService;
 
 
