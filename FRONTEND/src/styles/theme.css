@@ -1,0 +1,29 @@
+:root {
+
+  /* Brand */
+
+  --bg: #000000;
+  --surface: #0f0f0f;
+  --card: #171717;
+
+  --text: #ffffff;
+  --text-secondary: #9ca3af;
+
+  --border: #2a2a2a;
+
+  --accent: #ffffff;
+
+  /* Radius */
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+
+  /* Layout */
+
+  --container: 1320px;
+
+  /* Animation */
+
+  --transition: .35s ease;
+}

@@ -5,13 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c21fa02-2830-4655-9510-ca81234e56b5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/config/CorsConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/api/axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/api/axios.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/pages/AdminDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/pages/AdminDashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/services/productService.js" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/services/productService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/Button.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/Button.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/Container.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/Container.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/SectionTitle.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/SectionTitle.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/layout/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/layout/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/index.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/pages/Landing.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/pages/Landing.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/routes/AppRoutes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/routes/AppRoutes.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/styles/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/styles/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/styles/theme.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
