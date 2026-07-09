@@ -6,6 +6,8 @@ import {
     Bluetooth
 } from "lucide-react";
 
+import heroHeadphone from "../../assets/images/hero/headphone.png";
+
 function Experience() {
 
     const features = [
@@ -174,7 +176,7 @@ function Experience() {
 
                         <img
 
-                            src="/hero/headphone.png"
+                            src={heroHeadphone}
 
                             className="
                             relative

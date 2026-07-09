@@ -1,15 +1,21 @@
 function AudioText({
 
     children,
+    className=""
 
-    className = ""
+}){
 
-}) {
-
-    return (
+    return(
 
         <p
-            className={`text-gray-400 leading-8 ${className}`}
+
+            className={`
+            text-gray-400
+            leading-9
+            text-lg
+            ${className}
+            `}
+
         >
 
             {children}

@@ -1,28 +1,47 @@
-import { Headphones } from "lucide-react";
 import { motion } from "framer-motion";
-
-import { AudioButton } from "../common";
+import { Headphones, LayoutDashboard, Search, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+    const navigate = useNavigate();
+    const token = localStorage.getItem("token");
 
     const links = [
-
-        "Home",
-        "Products",
-        "About",
-        "Contact"
-
+        {
+            name: "Products",
+            path: "/products"
+        },
+        {
+            name: "Technology",
+            path: "/technology"
+        },
+        {
+            name: "Experience",
+            path: "/experience"
+        },
+        {
+            name: "Support",
+            path: "/support"
+        }
     ];
 
     return (
 
-        <motion.nav
+        <motion.header
 
-            initial={{ y: -80 }}
+            initial={{
+                y: -80,
+                opacity: 0
+            }}
 
-            animate={{ y: 0 }}
+            animate={{
+                y: 0,
+                opacity: 1
+            }}
 
-            transition={{ duration: .6 }}
+            transition={{
+                duration: .8
+            }}
 
             className="
             fixed
@@ -35,79 +54,130 @@ function Navbar() {
 
             <div
                 className="
-                max-w-7xl
+                max-w-[1500px]
                 mx-auto
-                mt-5"
-
+                px-8
+                pt-4"
             >
 
-                <div
+                <nav
 
                     className="
-                    h-20
+                    h-16
+
                     rounded-full
+
                     border
                     border-white/10
-                    bg-black/30
-                    backdrop-blur-xl
+
+                    bg-black/50
+
+                    backdrop-blur-3xl
+
+                    px-10
+
                     flex
+
                     items-center
-                    justify-between
-                    px-10"
+
+                    justify-between"
 
                 >
 
-                    <div
+                    {/* LOGO */}
+
+                    <Link
+
+                        to="/"
+
                         className="
                         flex
                         items-center
-                        gap-3"
+                        gap-4"
 
                     >
 
-                        <Headphones />
+                        <div
 
-                        <h2
                             className="
-                            tracking-[6px]
-                            font-bold"
+                            w-11
+                            h-11
+
+                            rounded-full
+
+                            border
+                            border-white/10
+
+                            flex
+
+                            justify-center
+
+                            items-center"
 
                         >
 
-                            AUDIOHUB
+                            <Headphones size={18}/>
 
-                        </h2>
+                        </div>
 
-                    </div>
+                        <div>
+
+                            <h2
+
+                                className="
+                                text-lg
+                                font-semibold
+                                tracking-[8px]"
+
+                            >
+
+                                AUDIOHUB
+
+                            </h2>
+
+                        </div>
+
+                    </Link>
+
+                    {/* MENU */}
 
                     <div
+
                         className="
                         hidden
+
                         lg:flex
-                        gap-10"
+
+                        items-center
+
+                        gap-12"
 
                     >
 
                         {
 
-                            links.map(link => (
+                            links.map(link=>(
 
-                                <a
+                                <Link
 
-                                    key={link}
+                                    key={link.name}
 
-                                    href="#"
+                                    to={link.path}
 
                                     className="
-                                    text-gray-300
+                                    text-gray-400
+
                                     hover:text-white
+
+                                    duration-300
+
                                     transition"
 
                                 >
 
-                                    {link}
+                                    {link.name}
 
-                                </a>
+                                </Link>
 
                             ))
 
@@ -115,17 +185,104 @@ function Navbar() {
 
                     </div>
 
-                    <AudioButton>
+                    {/* RIGHT */}
 
-                        Login
+                    <div
 
-                    </AudioButton>
+                        className="
+                        flex
+                        items-center
+                        gap-5"
 
-                </div>
+                    >
+
+                        <button
+
+                            onClick={() => navigate("/products")}
+                            aria-label="Search products"
+                            className="
+                            w-10
+                            h-10
+
+                            rounded-full
+
+                            flex
+
+                            items-center
+
+                            justify-center
+
+                            hover:bg-white/10
+
+                            transition"
+
+                        >
+
+                            <Search size={18}/>
+
+                        </button>
+
+                        <button
+
+                            onClick={() => navigate(token ? "/admin" : "/login")}
+                            aria-label={token ? "Open dashboard" : "Open login"}
+                            className="
+                            w-10
+                            h-10
+
+                            rounded-full
+
+                            flex
+
+                            items-center
+
+                            justify-center
+
+                            hover:bg-white/10
+
+                            transition"
+
+                        >
+
+                            {token ? <LayoutDashboard size={18}/> : <User size={18}/>}
+
+                        </button>
+
+                        <button
+
+                            onClick={() => navigate(token ? "/admin" : "/login")}
+                            className="
+                            h-11
+
+                            px-7
+
+                            rounded-full
+
+                            bg-white
+
+                            text-black
+
+                            font-semibold
+
+                            hover:scale-105
+
+                            duration-300
+
+                            transition"
+
+                        >
+
+                            {token ? "Dashboard" : "Login"}
+
+                        </button>
+
+                    </div>
+
+                </nav>
 
             </div>
 
-        </motion.nav>
+        </motion.header>
 
     );
 

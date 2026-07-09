@@ -1,21 +1,22 @@
-import AudioContainer from "./AudioContainer";
-
 function AudioSection({
-    children,
-    className = ""
-}) {
 
-    return (
+    children,
+    className=""
+
+}){
+
+    return(
 
         <section
-            className={`py-32 ${className}`}
+
+            className={`
+            py-32
+            ${className}
+            `}
+
         >
 
-            <AudioContainer>
-
-                {children}
-
-            </AudioContainer>
+            {children}
 
         </section>
 

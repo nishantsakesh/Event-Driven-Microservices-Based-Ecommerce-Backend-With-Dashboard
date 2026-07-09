@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loginUser } from "../services/authService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AudioButton, AudioCard, AudioInput, AudioText } from "../components/common";
 
 function Login() {
 
@@ -10,6 +11,8 @@ function Login() {
         email: "",
         password: ""
     });
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -21,6 +24,8 @@ function Login() {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
+        setError("");
+        setLoading(true);
 
         try {
 
@@ -37,40 +42,77 @@ function Login() {
             }
 
         } catch (error) {
-            alert("Invalid Credentials");
+            setError("Invalid credentials. Please check your email and password.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div>
-            <h2>Login</h2>
+        <main className="min-h-screen bg-black px-6 py-10 text-white">
+            <section className="mx-auto grid min-h-[calc(100vh-80px)] max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_.95fr]">
+                <div>
+                    <Link to="/" className="text-sm font-semibold tracking-[8px] text-white">
+                        AUDIOHUB
+                    </Link>
+                    <p className="mt-16 text-sm uppercase tracking-[10px] text-gray-500">
+                        Secure access
+                    </p>
+                    <h1 className="mt-8 text-6xl font-black leading-none md:text-8xl">
+                        Welcome
+                        <br />
+                        Back.
+                    </h1>
+                    <AudioText className="mt-8 max-w-xl text-xl">
+                        Manage a curated premium audio catalogue with the calm precision your customers expect.
+                    </AudioText>
+                </div>
 
-            <form onSubmit={handleSubmit}>
+                <AudioCard className="mx-auto w-full max-w-xl">
+                    <h2 className="text-3xl font-black">Login</h2>
+                    <AudioText className="mt-3">
+                        Use your AudioHub admin account to continue.
+                    </AudioText>
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    onChange={handleChange}
-                />
+                    <form onSubmit={handleSubmit} className="mt-10 space-y-5">
+                        <AudioInput
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
 
-                <br /><br />
+                        <AudioInput
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                />
+                        {error && (
+                            <p className="rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-4 text-sm text-red-300">
+                                {error}
+                            </p>
+                        )}
 
-                <br /><br />
+                        <AudioButton type="submit" className="w-full" disabled={loading}>
+                            {loading ? "Signing in..." : "Login"}
+                        </AudioButton>
+                    </form>
 
-                <button type="submit">
-                    Login
-                </button>
-
-            </form>
-        </div>
+                    <p className="mt-8 text-center text-sm text-gray-500">
+                        New to AudioHub?{" "}
+                        <Link to="/register" className="text-white">
+                            Create account
+                        </Link>
+                    </p>
+                </AudioCard>
+            </section>
+        </main>
     );
 }
 

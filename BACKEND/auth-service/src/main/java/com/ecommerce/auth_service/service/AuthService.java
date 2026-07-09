@@ -57,12 +57,14 @@ public class AuthService {
             throw new RuntimeException("Invalid Password");
         }
 
-        String token = jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user);
 
         return new LoginResponse(
-                token,
+                user.getId(),
+                user.getName(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRole().name(),
+                token
         );
     }
 

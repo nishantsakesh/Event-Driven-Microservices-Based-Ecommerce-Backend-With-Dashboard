@@ -5,19 +5,62 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c21fa02-2830-4655-9510-ca81234e56b5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/Button.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/Button.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/Container.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/Container.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/SectionTitle.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/SectionTitle.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/dto/LoginResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/dto/LoginResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/security/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/security/JwtService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/src/main/java/com/ecommerce/auth_service/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/notification-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/notification-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/dto/ProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/dto/ProductRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/zip services/api-gateway.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/zip services/auth-service.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/zip services/inventory-service.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/zip services/notification-service.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/zip services/order-service.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/zip services/payment-service.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BACKEND/zip services/product-service.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/assets/hero.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioContainer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioContainer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioHeading.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioHeading.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioInput.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioSection.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioSection.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioText.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/common/AudioText.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/Button.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/Container.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/common/SectionTitle.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/layout/Footer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/layout/Footer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/layout/MainLayout.jsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/layout/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/layout/Navbar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/index.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/product/ProductCard.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/product/ProductGrid.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/sections/Experience.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/components/sections/Experience.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/sections/Hero.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/components/sections/ProductShowcase.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/hooks/useProducts.js" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/hooks/useProducts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/layouts/MainLayout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/layouts/MainLayout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/pages/AdminDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/pages/AdminDashboard.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FRONTEND/src/pages/Landing.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/pages/Landing.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/pages/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/pages/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/pages/Register.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/pages/Register.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/public/hero/headphone.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/FRONTEND/src/routes/AppRoutes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/routes/AppRoutes.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FRONTEND/src/services/productService.js" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/services/productService.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FRONTEND/src/styles/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/styles/globals.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FRONTEND/src/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/src/styles/theme.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FRONTEND/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/FRONTEND/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,25 +93,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Spring Boot.AuthServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.ProductServiceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/NISHANT PERSONAL/Event-Driven-Microservices-Based-Ecommerce-Backend-With-Dashboard-main&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.InventoryServiceApplication.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.AuthServiceApplication.executor": "Run",
+    "Spring Boot.InventoryServiceApplication.executor": "Run",
+    "Spring Boot.OrderServiceApplication.executor": "Run",
+    "Spring Boot.PaymentServiceApplication.executor": "Run",
+    "Spring Boot.ProductServiceApplication.executor": "Run",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/NISHANT PERSONAL/Event-Driven-Microservices-Based-Ecommerce-Backend-With-Dashboard-main",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

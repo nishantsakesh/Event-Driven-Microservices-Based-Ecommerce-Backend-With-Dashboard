@@ -1,5 +1,6 @@
 function AudioInput({
 
+    className = "",
     ...props
 
 }) {
@@ -10,7 +11,7 @@ function AudioInput({
 
             {...props}
 
-            className="
+            className={`
             w-full
             rounded-2xl
             bg-white/5
@@ -21,6 +22,8 @@ function AudioInput({
             text-white
             outline-none
             focus:border-white"
+            ${className}
+            `}
 
         />
 

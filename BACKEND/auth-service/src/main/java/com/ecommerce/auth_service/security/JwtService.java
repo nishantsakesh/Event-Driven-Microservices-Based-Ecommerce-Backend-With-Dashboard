@@ -1,7 +1,7 @@
 package com.ecommerce.auth_service.security;
+import com.ecommerce.auth_service.entity.User;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,21 +18,52 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String generateToken(String email) {
-
-        SecretKey key =
-                Keys.hmacShaKeyFor(secret.getBytes());
+    public String generateToken(User user) {
 
         return Jwts.builder()
-                .subject(email)
+
+                .subject(user.getEmail())
+
+                .claim("id", user.getId())
+
+                .claim("name", user.getName())
+
+                .claim("role", user.getRole().name())
+
                 .issuedAt(new Date())
+
                 .expiration(
                         new Date(
                                 System.currentTimeMillis()
                                         + expiration
                         )
                 )
-                .signWith(key, SignatureAlgorithm.HS256)
+
+                .signWith(getSigningKey())
+
                 .compact();
+
+    }
+
+    public String extractEmail(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            extractEmail(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 }

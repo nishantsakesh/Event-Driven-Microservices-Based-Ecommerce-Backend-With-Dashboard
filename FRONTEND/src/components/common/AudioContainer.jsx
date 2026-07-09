@@ -1,13 +1,19 @@
-function AudioContainer({ children }) {
+function AudioContainer({
 
-    return (
+    children
+
+}){
+
+    return(
 
         <div
+
             className="
+            max-w-[1440px]
             mx-auto
-            max-w-7xl
-            px-6
-            lg:px-12"
+            px-8
+            lg:px-16"
+
         >
 
             {children}

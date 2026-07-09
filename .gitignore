@@ -1,0 +1,19 @@
+# Environment files with real secrets
+.env
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Java build artifacts
+target/

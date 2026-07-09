@@ -1,28 +1,19 @@
 import MainLayout from "../layouts/MainLayout";
 
-import Hero from "../components/sections/Hero";
-import Features from "../components/sections/Features";
-import ProductShowcase from "../components/sections/ProductShowcase";
+import Hero from "../components/sections/Hero/Hero";
+import FeaturedProducts from "../components/sections/FeaturedProducts/FeaturedProducts";
 import Experience from "../components/sections/Experience";
+import Features from "../components/sections/Features";
 
 function Landing() {
-
     return (
-
         <MainLayout>
-
             <Hero />
-
-            <Features />
-
-            <ProductShowcase />
-
+            <FeaturedProducts />
             <Experience />
-
+            <Features />
         </MainLayout>
-
     );
-
 }
 
 export default Landing;

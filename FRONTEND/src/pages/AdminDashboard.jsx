@@ -1,262 +1,156 @@
 import { useEffect, useState } from "react";
-import {
-    addProduct,
-    deleteProduct,
-    getProducts,
-    updateProduct
-} from "../services/productService";
+import { useNavigate } from "react-router-dom";
+import { LogOut, Package, ShieldCheck, Sparkles } from "lucide-react";
+import ProductForm from "../components/admin/ProductForm";
+import ProductList from "../components/admin/ProductList";
+import { AudioButton, AudioContainer, AudioSection, AudioStats, AudioText } from "../components/common";
+import { addProduct, deleteProduct, getProducts, updateProduct } from "../services/productService";
+import MainLayout from "../layouts/MainLayout"; // Imported your layout wrapper
+
+const emptyProduct = {
+    name: "",
+    brand: "",
+    category: "HEADPHONE",
+    price: "",
+    quantity: "",
+    description: "",
+    imageUrl: "",
+};
 
 function AdminDashboard() {
-
+    const navigate = useNavigate();
     const email = localStorage.getItem("email");
-
     const [products, setProducts] = useState([]);
+    const [product, setProduct] = useState(emptyProduct);
     const [editingId, setEditingId] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState(null);
 
-    const [product, setProduct] = useState({
-        name: "",
-        brand: "",
-        category: "HEADPHONE",
-        price: "",
-        quantity: "",
-        description: "",
-        imageUrl: ""
-    });
+    const loadProducts = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await getProducts();
+            setProducts(response.data);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         loadProducts();
     }, []);
 
-    const loadProducts = async () => {
-
-        const response = await getProducts();
-        setProducts(response.data);
-
+    const resetForm = () => {
+        setProduct(emptyProduct);
+        setEditingId(null);
     };
 
-    const handleChange = (e) => {
-
-        setProduct({
-            ...product,
-            [e.target.name]: e.target.value
-        });
-
+    const handleChange = (event) => {
+        setProduct({ ...product, [event.target.name]: event.target.value });
     };
 
-    const handleSubmit = async (e) => {
-
-        e.preventDefault();
-
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setSaving(true);
         try {
-
-            if (editingId === null) {
-
-                await addProduct(product);
-                alert("Product Added Successfully");
-
-            } else {
-
-                await updateProduct(editingId, product);
-                alert("Product Updated Successfully");
-
-                setEditingId(null);
-            }
-
-            setProduct({
-                name: "",
-                brand: "",
-                category: "HEADPHONE",
-                price: "",
-                quantity: "",
-                description: "",
-                imageUrl: ""
-            });
-
-            loadProducts();
-
-        } catch (error) {
-
-            console.log(error);
-
+            if (editingId) await updateProduct(editingId, product);
+            else await addProduct(product);
+            resetForm();
+            await loadProducts();
+        } finally {
+            setSaving(false);
         }
-
     };
 
     const handleDelete = async (id) => {
-
-        if (window.confirm("Delete this product?")) {
-
-            await deleteProduct(id);
-
-            loadProducts();
-        }
-
+        if (!window.confirm("Delete this product?")) return;
+        await deleteProduct(id);
+        await loadProducts();
     };
 
-    const handleEdit = (product) => {
-
-        setEditingId(product.id);
-
+    const handleEdit = (selectedProduct) => {
+        setEditingId(selectedProduct.id);
         setProduct({
-            name: product.name,
-            brand: product.brand,
-            category: product.category,
-            price: product.price,
-            quantity: product.quantity,
-            description: product.description,
-            imageUrl: product.imageUrl
+            name: selectedProduct.name || "",
+            brand: selectedProduct.brand || "",
+            category: selectedProduct.category || "HEADPHONE",
+            price: selectedProduct.price || "",
+            quantity: selectedProduct.quantity || "",
+            description: selectedProduct.description || "",
+            imageUrl: selectedProduct.imageUrl || "",
         });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate("/login");
     };
 
     return (
+        <MainLayout>
+            <main className="min-h-screen bg-black text-white">
+                <AudioSection className="pt-12">
+                    <AudioContainer>
+                        <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                            <div>
+                                <p className="text-sm uppercase tracking-[10px] text-gray-500">Admin dashboard</p>
+                                <h1 className="mt-6 text-5xl font-black leading-none md:text-7xl">AudioHub Control</h1>
+                                <AudioText className="mt-6 max-w-2xl">
+                                    Manage a curated catalogue where every product has a brand, a reason to exist, and a premium presentation.
+                                </AudioText>
+                                <p className="mt-4 text-sm text-gray-500">Signed in as {email}</p>
+                            </div>
 
-        <div style={{ padding: "20px" }}>
+                            <AudioButton variant="secondary" onClick={handleLogout}>
+                                <span className="inline-flex items-center gap-3">
+                                    <LogOut size={18} />
+                                    Logout
+                                </span>
+                            </AudioButton>
+                        </div>
 
-            <h1>Admin Dashboard</h1>
+                        <div className="mb-12 grid gap-5 md:grid-cols-3">
+                            <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
+                                <Package className="mb-6" />
+                                <AudioStats value={products.length} label="Products" />
+                            </div>
+                            <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
+                                <ShieldCheck className="mb-6" />
+                                <AudioStats value="100%" label="Genuine focus" />
+                            </div>
+                            <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
+                                <Sparkles className="mb-6" />
+                                <AudioStats value="4" label="Budget tiers" />
+                            </div>
+                        </div>
 
-            <h3>Welcome, {email}</h3>
-
-            <hr />
-
-            <h2>
-                {editingId ? "Update Product" : "Add Product"}
-            </h2>
-
-            <form onSubmit={handleSubmit}>
-
-                <input
-                    placeholder="Name"
-                    name="name"
-                    value={product.name}
-                    onChange={handleChange}
-                />
-
-                <br /><br />
-
-                <input
-                    placeholder="Brand"
-                    name="brand"
-                    value={product.brand}
-                    onChange={handleChange}
-                />
-
-                <br /><br />
-
-                <select
-                    name="category"
-                    value={product.category}
-                    onChange={handleChange}
-                >
-                    <option>HEADPHONE</option>
-                    <option>EARPHONE</option>
-                    <option>EARBUDS</option>
-                    <option>SPEAKER</option>
-                    <option>SOUNDBAR</option>
-                    <option>HEADSET</option>
-                </select>
-
-                <br /><br />
-
-                <input
-                    type="number"
-                    placeholder="Price"
-                    name="price"
-                    value={product.price}
-                    onChange={handleChange}
-                />
-
-                <br /><br />
-
-                <input
-                    type="number"
-                    placeholder="Quantity"
-                    name="quantity"
-                    value={product.quantity}
-                    onChange={handleChange}
-                />
-
-                <br /><br />
-
-                <textarea
-                    placeholder="Description"
-                    name="description"
-                    value={product.description}
-                    onChange={handleChange}
-                />
-
-                <br /><br />
-
-                <input
-                    placeholder="Image Name (sony.jpg)"
-                    name="imageUrl"
-                    value={product.imageUrl}
-                    onChange={handleChange}
-                />
-
-                <br /><br />
-
-                <button type="submit">
-                    {editingId ? "Update Product" : "Add Product"}
-                </button>
-
-            </form>
-
-            <hr />
-
-            <h2>Products</h2>
-
-            {
-
-                products.map(product => (
-
-                    <div
-                        key={product.id}
-                        style={{
-                            border: "1px solid black",
-                            padding: "15px",
-                            marginBottom: "15px"
-                        }}
-                    >
-
-                        <h3>{product.name}</h3>
-
-                        <p><b>Brand:</b> {product.brand}</p>
-
-                        <p><b>Category:</b> {product.category}</p>
-
-                        <p><b>Price:</b> ₹{product.price}</p>
-
-                        <p><b>Quantity:</b> {product.quantity}</p>
-
-                        <p><b>Description:</b> {product.description}</p>
-
-                        <p><b>Image:</b> {product.imageUrl}</p>
-
-                        <button
-                            onClick={() => handleEdit(product)}
-                        >
-                            Update
-                        </button>
-
-                        {"  "}
-
-                        <button
-                            onClick={() => handleDelete(product.id)}
-                        >
-                            Delete
-                        </button>
-
-                    </div>
-
-                ))
-
-            }
-
-        </div>
-
+                        <div className="grid gap-8 xl:grid-cols-[.9fr_1.1fr]">
+                            <ProductForm
+                                product={product}
+                                editingId={editingId}
+                                loading={saving}
+                                onChange={handleChange}
+                                onSubmit={handleSubmit}
+                                onCancel={resetForm}
+                            />
+                            <ProductList
+                                products={products}
+                                loading={loading}
+                                error={error}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        </div>
+                    </AudioContainer>
+                </AudioSection>
+            </main>
+        </MainLayout>
     );
-
 }
 
 export default AdminDashboard;

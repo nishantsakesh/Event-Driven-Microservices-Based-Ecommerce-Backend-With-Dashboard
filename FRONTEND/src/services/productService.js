@@ -1,17 +1,21 @@
-import { productApi } from "../api/axios";
+import axios from "axios";
 
-export const getProducts = () => {
-    return productApi.get("");
+const API = "http://localhost:8082/api/products";
+
+
+export const getProducts = () => axios.get(API);
+export const getProductById = (id) => axios.get(`${API}/${id}`);
+export const addProduct = (product) => axios.post(API, product);
+export const updateProduct = (id, product) => axios.put(`${API}/${id}`, product);
+export const deleteProduct = (id) => axios.delete(`${API}/${id}`);
+
+
+const productService = {
+    getAllProducts: getProducts,
+    getProductById,
+    addProduct,
+    updateProduct,
+    deleteProduct
 };
 
-export const addProduct = (product) => {
-    return productApi.post("", product);
-};
-
-export const deleteProduct = (id) => {
-    return productApi.delete(`/${id}`);
-};
-
-export const updateProduct = (id, product) => {
-    return productApi.put(`/${id}`, product);
-};
+export default productService;

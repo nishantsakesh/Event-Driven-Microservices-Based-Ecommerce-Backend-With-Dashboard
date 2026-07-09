@@ -1,72 +1,75 @@
 function AudioHeading({
 
     eyebrow,
-
     title,
-
     subtitle,
+    center=false
 
-    center = false
+}){
 
-}) {
-
-    return (
+    return(
 
         <div
-            className={center ? "text-center" : ""}
-        >
+        className={
+            center
+            ?"text-center"
+            :""
+        }>
 
             {
 
-                eyebrow && (
+                eyebrow&&
 
-                    <p
-                        className="
-                        uppercase
-                        tracking-[8px]
-                        text-gray-500
-                        mb-5"
-                    >
+                <p
 
-                        {eyebrow}
+                    className="
+                    uppercase
+                    tracking-[12px]
+                    text-sm
+                    text-gray-500
+                    mb-8"
 
-                    </p>
+                >
 
-                )
+                    {eyebrow}
+
+                </p>
 
             }
 
-            <h2
+            <h1
+
                 className="
-                text-5xl
-                lg:text-7xl
+                text-6xl
+                lg:text-8xl
                 font-black
-                leading-tight"
+                leading-none"
+
             >
 
                 {title}
 
-            </h2>
+            </h1>
 
             {
 
-                subtitle && (
+                subtitle&&
 
-                    <p
-                        className="
-                        mt-8
-                        text-gray-400
-                        text-xl
-                        max-w-2xl
-                        leading-9
-                        mx-auto"
-                    >
+                <p
 
-                        {subtitle}
+                    className={`
+                    mt-8
+                    text-xl
+                    text-gray-400
+                    max-w-2xl
+                    ${center ? "mx-auto" : ""}
+                    `}
 
-                    </p>
+                >
 
-                )
+                    {subtitle}
+
+                </p>
 
             }
 

@@ -6,6 +6,9 @@
       <list>
         <option value="$PROJECT_DIR$/BACKEND/auth-service/pom.xml" />
         <option value="$PROJECT_DIR$/BACKEND/product-service/pom.xml" />
+        <option value="$PROJECT_DIR$/BACKEND/inventory-service/pom.xml" />
+        <option value="$PROJECT_DIR$/BACKEND/order-service/pom.xml" />
+        <option value="$PROJECT_DIR$/BACKEND/payment-service/pom.xml" />
       </list>
     </option>
   </component>
