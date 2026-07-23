@@ -64,25 +64,5 @@ public class OrderController {
         );
 
     }
-
-    @PostMapping("/{id}/payment-success")
-    public ResponseEntity<OrderResponse> paymentSuccess(
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                orderService.paymentSuccess(id)
-        );
-
-    }
-
-    @PostMapping("/{id}/payment-failed")
-    public ResponseEntity<OrderResponse> paymentFailed(
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                orderService.paymentFailed(id)
-        );
-
-    }
-
+    
 }

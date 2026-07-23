@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.ecommerce.common.enums.OrderStatus;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +23,7 @@ public class OrderResponse {
 
     private BigDecimal totalAmount;
 
-    private String status;
+    private OrderStatus status;
 
     private List<OrderItemResponse> items;
 

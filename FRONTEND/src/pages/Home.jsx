@@ -1,16 +1,27 @@
-function Home() {
+import Hero from "../components/home/Hero";
+import Stats from "../components/home/Stats";
+import Brands from "../components/home/Brands";
+import Features from "../components/home/Features";
+import Categories from "../components/home/Categories";
+import CTA from "../components/home/CTA";
+import FeaturedProducts from "../components/home/FeaturedProducts";
 
-    const email = localStorage.getItem("email");
-
+export default function Home() {
     return (
-        <div>
-            <h1>AudioHub</h1>
+        <>
+            <Hero />
 
-            <h3>Welcome {email}</h3>
+            <Stats />
 
-            <p>User Home Page</p>
-        </div>
+            <Brands />
+
+            <Features />
+
+            <Categories />
+
+            <FeaturedProducts/>
+
+            <CTA />
+        </>
     );
 }
-
-export default Home;

@@ -1,19 +1,67 @@
-# Environment files with real secrets
-.env
+##############################
+# IntelliJ / Eclipse / VS Code
+##############################
 
-# IDE
 .idea/
-*.iws
 *.iml
-*.ipr
+.project
+.classpath
+.settings/
 .vscode/
 
-# OS
+##############################
+# Maven
+##############################
+
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+##############################
+# Logs
+##############################
+
+*.log
+logs/
+
+##############################
+# Spring Boot
+##############################
+
+*.pid
+*.seed
+*.pid.lock
+
+##############################
+# OS Files
+##############################
+
 .DS_Store
 Thumbs.db
 
+##############################
 # Node
-node_modules/
+##############################
 
-# Java build artifacts
-target/
+node_modules/
+dist/
+build/
+
+##############################
+# Environment Variables
+##############################
+
+.env
+
+##############################
+# Docker
+##############################
+
+docker-data/
+
+##############################
+# Temporary
+##############################
+
+*.tmp
+*.swp

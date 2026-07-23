@@ -1,23 +1,27 @@
 package com.ecommerce.order_service.service;
 
-import com.ecommerce.order_service.dto.*;
+import com.ecommerce.common.constants.RabbitMQConstants;
+import com.ecommerce.common.enums.OrderStatus;
+import com.ecommerce.common.events.OrderCreatedEvent;
+import com.ecommerce.order_service.dto.OrderItemResponse;
+import com.ecommerce.order_service.dto.OrderRequest;
+import com.ecommerce.order_service.dto.OrderResponse;
+import com.ecommerce.order_service.dto.ProductResponse;
 import com.ecommerce.order_service.entity.Order;
 import com.ecommerce.order_service.entity.OrderItem;
-import com.ecommerce.order_service.entity.OrderStatus;
+import com.ecommerce.order_service.messaging.EventPublisher;
 import com.ecommerce.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import com.ecommerce.common.events.OrderItemEvent;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Value;
-
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +30,10 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final RestTemplate restTemplate;
+    private final EventPublisher eventPublisher;
 
     @Value("${product.service.url}")
     private String productServiceUrl;
-
-    @Value("${inventory.service.url}")
-    private String inventoryServiceUrl;
 
     public OrderResponse createOrder(OrderRequest request) {
 
@@ -39,12 +41,12 @@ public class OrderService {
 
         Order order = Order.builder()
                 .userId(request.getUserId())
-                .status(OrderStatus.CREATED)
+                .status(OrderStatus.PAYMENT_PENDING)
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
 
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
         List<OrderItem> items = request.getItems()
                 .stream()
@@ -66,42 +68,22 @@ public class OrderService {
 
         for (OrderItem item : items) {
 
-            total = total.add(
+            totalAmount = totalAmount.add(
 
-                    item.getUnitPrice()
-                            .multiply(
-                                    BigDecimal.valueOf(item.getQuantity())
-                            )
+                    item.getUnitPrice().multiply(
+                            BigDecimal.valueOf(item.getQuantity())
+                    )
 
             );
 
         }
 
         order.setItems(items);
-        order.setTotalAmount(total);
+        order.setTotalAmount(totalAmount);
 
         orderRepository.save(order);
 
-        try {
-
-            reserveInventory(items);
-
-            order.setStatus(OrderStatus.INVENTORY_RESERVED);
-
-        } catch (Exception e) {
-
-            order.setStatus(OrderStatus.CANCELLED);
-            order.setUpdatedAt(LocalDateTime.now());
-
-            orderRepository.save(order);
-
-            return toResponse(order);
-
-        }
-
-        order.setUpdatedAt(LocalDateTime.now());
-
-        orderRepository.save(order);
+        publishOrderCreated(order);
 
         return toResponse(order);
 
@@ -109,7 +91,8 @@ public class OrderService {
 
     public List<OrderResponse> getAllOrders() {
 
-        return orderRepository.findAllByOrderByCreatedAtDesc()
+        return orderRepository
+                .findAllByOrderByCreatedAtDesc()
                 .stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
@@ -128,7 +111,8 @@ public class OrderService {
 
     public OrderResponse getOrder(Long id) {
 
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository
+                .findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Order not found"));
 
@@ -138,20 +122,18 @@ public class OrderService {
 
     public OrderResponse cancelOrder(Long id) {
 
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository
+                .findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Order not found"));
 
-        if (order.getStatus() != OrderStatus.CREATED &&
-                order.getStatus() != OrderStatus.INVENTORY_RESERVED) {
+        if (order.getStatus() == OrderStatus.ORDER_CONFIRMED) {
 
             throw new RuntimeException(
-                    "Only newly created orders can be cancelled."
+                    "Confirmed orders cannot be cancelled."
             );
 
         }
-
-        releaseInventory(order);
 
         order.setStatus(OrderStatus.CANCELLED);
         order.setUpdatedAt(LocalDateTime.now());
@@ -162,128 +144,15 @@ public class OrderService {
 
     }
 
-    public OrderResponse paymentSuccess(Long id) {
-
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Order not found"));
-
-        if (order.getStatus() != OrderStatus.INVENTORY_RESERVED) {
-
-            throw new RuntimeException(
-                    "Payment can only be completed after inventory reservation."
-            );
-
-        }
-
-        confirmInventory(order);
-
-        order.setStatus(OrderStatus.ORDER_CONFIRMED);
-        order.setUpdatedAt(LocalDateTime.now());
-
-        orderRepository.save(order);
-
-        return toResponse(order);
-
-    }
-
-    public OrderResponse paymentFailed(Long id) {
-
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Order not found"));
-
-        if (order.getStatus() != OrderStatus.INVENTORY_RESERVED) {
-
-            throw new RuntimeException(
-                    "Inventory is not reserved for this order."
-            );
-
-        }
-
-        releaseInventory(order);
-
-        order.setStatus(OrderStatus.PAYMENT_FAILED);
-        order.setUpdatedAt(LocalDateTime.now());
-
-        orderRepository.save(order);
-
-        return toResponse(order);
-
-    }
-
-    private void reserveInventory(List<OrderItem> items) {
-
-        for (OrderItem item : items) {
-
-            restTemplate.postForObject(
-
-                    inventoryServiceUrl + "/api/inventory/reserve",
-
-                    Map.of(
-                            "productId", item.getProductId(),
-                            "quantity", item.getQuantity()
-                    ),
-
-                    Object.class
-
-            );
-
-        }
-
-    }
-
-    private void releaseInventory(Order order) {
-
-        for (OrderItem item : order.getItems()) {
-
-            restTemplate.postForObject(
-
-                    inventoryServiceUrl + "/api/inventory/release",
-
-                    Map.of(
-                            "productId", item.getProductId(),
-                            "quantity", item.getQuantity()
-                    ),
-
-                    Object.class
-
-            );
-
-        }
-
-    }
-
-    private void confirmInventory(Order order) {
-
-        for (OrderItem item : order.getItems()) {
-
-            restTemplate.postForObject(
-
-                    inventoryServiceUrl + "/api/inventory/confirm",
-
-                    Map.of(
-                            "productId", item.getProductId(),
-                            "quantity", item.getQuantity()
-                    ),
-
-                    Object.class
-
-            );
-
-        }
-
-    }
 
     private ProductResponse getProduct(Long productId) {
 
         ProductResponse product =
                 restTemplate.getForObject(
-
-                        productServiceUrl + "/api/products/" + productId,
-
+                        productServiceUrl +
+                                "/api/products/" +
+                                productId,
                         ProductResponse.class
-
                 );
 
         if (product == null) {
@@ -298,7 +167,40 @@ public class OrderService {
 
     }
 
+    private void publishOrderCreated(Order order) {
 
+        OrderCreatedEvent event =
+                OrderCreatedEvent.builder()
+                        .orderId(order.getId())
+                        .userId(order.getUserId())
+                        .totalAmount(order.getTotalAmount())
+                        .orderStatus(order.getStatus())
+                        .createdAt(order.getCreatedAt())
+                        .items(
+
+                                order.getItems()
+                                        .stream()
+                                        .map(item ->
+
+                                                com.ecommerce.common.events.OrderItemEvent.builder()
+                                                        .productId(item.getProductId())
+                                                        .productName(item.getProductName())
+                                                        .quantity(item.getQuantity())
+                                                        .unitPrice(item.getUnitPrice())
+                                                        .build()
+
+                                        )
+                                        .toList()
+
+                        )
+                        .build();
+
+        eventPublisher.publish(
+                RabbitMQConstants.ORDER_CREATED,
+                event
+        );
+
+    }
 
     private OrderResponse toResponse(Order order) {
 
@@ -306,7 +208,7 @@ public class OrderService {
                 .id(order.getId())
                 .userId(order.getUserId())
                 .totalAmount(order.getTotalAmount())
-                .status(order.getStatus().name())
+                .status(order.getStatus())
                 .items(
                         order.getItems()
                                 .stream()
@@ -330,4 +232,5 @@ public class OrderService {
                 .build();
 
     }
+
 }

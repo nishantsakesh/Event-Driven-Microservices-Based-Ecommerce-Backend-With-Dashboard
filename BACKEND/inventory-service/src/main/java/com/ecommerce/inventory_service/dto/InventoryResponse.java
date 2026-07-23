@@ -1,21 +1,29 @@
 package com.ecommerce.inventory_service.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.ecommerce.inventory_service.entity.InventoryStatus;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class InventoryResponse {
 
     private Long id;
+
+    private Long orderId;
+
+    private Long userId;
+
     private Long productId;
-    private Integer availableStock;
-    private Integer reservedStock;
-    private LocalDateTime updatedAt;
+
+    private Integer quantity;
+
+    private InventoryStatus status;
+
+    private LocalDateTime processedAt;
+
 }

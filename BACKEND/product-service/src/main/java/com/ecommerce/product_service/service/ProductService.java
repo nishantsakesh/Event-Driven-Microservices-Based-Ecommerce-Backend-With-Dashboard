@@ -30,17 +30,17 @@ public class ProductService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        Product savedProduct = productRepository.save(product);
+        Product saved = productRepository.save(product);
 
         return ProductResponse.builder()
-                .id(savedProduct.getId())
-                .name(savedProduct.getName())
-                .brand(savedProduct.getBrand())
-                .category(savedProduct.getCategory())
-                .price(savedProduct.getPrice())
-                .quantity(savedProduct.getQuantity())
-                .description(savedProduct.getDescription())
-                .imageUrl(savedProduct.getImageUrl())
+                .id(saved.getId())
+                .name(saved.getName())
+                .brand(saved.getBrand())
+                .category(saved.getCategory())
+                .price(saved.getPrice())
+                .quantity(saved.getQuantity())
+                .description(saved.getDescription())
+                .imageUrl(saved.getImageUrl())
                 .build();
     }
 
@@ -53,6 +53,7 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Product Not Found"));
+
     }
 
     public String deleteProduct(Long id) {
@@ -60,14 +61,13 @@ public class ProductService {
         productRepository.deleteById(id);
 
         return "Product Deleted Successfully";
+
     }
 
     public Product updateProduct(Long id,
                                  ProductRequest request) {
 
-        Product product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Product Not Found"));
+        Product product = getProductById(id);
 
         product.setName(request.getName());
         product.setBrand(request.getBrand());
@@ -79,6 +79,31 @@ public class ProductService {
         product.setUpdatedAt(LocalDateTime.now());
 
         return productRepository.save(product);
+
+    }
+
+    
+    public Product reduceStock(Long productId,
+                               Integer quantity) {
+
+        Product product = getProductById(productId);
+
+        if (product.getQuantity() < quantity) {
+
+            throw new RuntimeException(
+                    "Insufficient Stock"
+            );
+
+        }
+
+        product.setQuantity(
+                product.getQuantity() - quantity
+        );
+
+        product.setUpdatedAt(LocalDateTime.now());
+
+        return productRepository.save(product);
+
     }
 
 }

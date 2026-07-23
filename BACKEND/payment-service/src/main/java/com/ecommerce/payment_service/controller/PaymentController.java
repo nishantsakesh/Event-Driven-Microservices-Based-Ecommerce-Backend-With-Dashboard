@@ -1,11 +1,8 @@
 package com.ecommerce.payment_service.controller;
 
-import com.ecommerce.payment_service.dto.PaymentRequest;
 import com.ecommerce.payment_service.dto.PaymentResponse;
-import com.ecommerce.payment_service.service.PaymentService;
-import jakarta.validation.Valid;
+import com.ecommerce.payment_service.service.PaymentQueryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,23 +13,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService paymentService;
-
-    @PostMapping
-    public ResponseEntity<PaymentResponse> createPayment(
-            @Valid @RequestBody PaymentRequest request) {
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(paymentService.createPayment(request));
-
-    }
+    private final PaymentQueryService paymentQueryService;
 
     @GetMapping
     public ResponseEntity<List<PaymentResponse>> getAllPayments() {
 
         return ResponseEntity.ok(
-                paymentService.getAllPayments()
+                paymentQueryService.getAllPayments()
         );
 
     }
@@ -42,7 +29,7 @@ public class PaymentController {
             @PathVariable Long id) {
 
         return ResponseEntity.ok(
-                paymentService.getPayment(id)
+                paymentQueryService.getPayment(id)
         );
 
     }
@@ -52,7 +39,7 @@ public class PaymentController {
             @PathVariable Long orderId) {
 
         return ResponseEntity.ok(
-                paymentService.getPaymentByOrderId(orderId)
+                paymentQueryService.getPaymentByOrder(orderId)
         );
 
     }
@@ -62,17 +49,7 @@ public class PaymentController {
             @PathVariable Long userId) {
 
         return ResponseEntity.ok(
-                paymentService.getPaymentsByUser(userId)
-        );
-
-    }
-
-    @PostMapping("/{paymentId}/refund")
-    public ResponseEntity<PaymentResponse> refundPayment(
-            @PathVariable Long paymentId) {
-
-        return ResponseEntity.ok(
-                paymentService.refundPayment(paymentId)
+                paymentQueryService.getPaymentsByUser(userId)
         );
 
     }

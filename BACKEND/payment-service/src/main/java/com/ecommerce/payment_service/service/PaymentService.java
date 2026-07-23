@@ -1,20 +1,17 @@
 package com.ecommerce.payment_service.service;
 
-import com.ecommerce.payment_service.dto.OrderSummary;
-import com.ecommerce.payment_service.dto.PaymentRequest;
-import com.ecommerce.payment_service.dto.PaymentResponse;
+import com.ecommerce.common.enums.PaymentStatus;
+import com.ecommerce.common.events.OrderCreatedEvent;
+import com.ecommerce.common.events.PaymentFailedEvent;
+import com.ecommerce.common.events.PaymentSuccessEvent;
 import com.ecommerce.payment_service.entity.Payment;
-import com.ecommerce.payment_service.entity.PaymentStatus;
+import com.ecommerce.payment_service.messaging.EventPublisher;
 import com.ecommerce.payment_service.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,212 +19,80 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final RestTemplate restTemplate;
+    private final EventPublisher eventPublisher;
 
-    @Value("${order.service.url}")
-    private String orderServiceUrl;
+    public void processPayment(OrderCreatedEvent event) {
 
-    public PaymentResponse createPayment(PaymentRequest request) {
-
-        OrderSummary order = getOrder(request.getOrderId());
-
-        if (!order.getStatus().equals("INVENTORY_RESERVED")) {
-            throw new RuntimeException(
-                    "Order is not ready for payment."
-            );
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-
-        Payment payment = Payment.builder()
-                .orderId(order.getId())
-                .userId(order.getUserId())
-                .amount(order.getTotalAmount())
-                .paymentMethod(request.getPaymentMethod())
-                .status(PaymentStatus.PENDING)
-                .transactionId(generateTransactionId())
-                .createdAt(now)
-                .updatedAt(now)
-                .build();
-
-        paymentRepository.save(payment);
+        System.out.println("=================================");
+        System.out.println("PROCESSING PAYMENT");
+        System.out.println("Order Id : " + event.getOrderId());
+        System.out.println("User Id  : " + event.getUserId());
+        System.out.println("Amount   : " + event.getTotalAmount());
+        System.out.println("=================================");
 
         try {
 
-            /*
-             * Mock Payment Gateway
-             *
-             * Currently every payment succeeds.
-             *
-             * Later this block can call:
-             * Razorpay
-             * Stripe
-             * PhonePe
-             * PayPal
-             */
+            Payment payment = Payment.builder()
+                    .orderId(event.getOrderId())
+                    .userId(event.getUserId())
+                    .amount(event.getTotalAmount())
+                    .paymentMethod("UPI")
+                    .status(com.ecommerce.payment_service.entity.PaymentStatus.SUCCESS)
+                    .transactionId(generateTransactionId())
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
 
-            payment.setStatus(PaymentStatus.SUCCESS);
+            payment = paymentRepository.save(payment);
 
-            restTemplate.postForObject(
+            PaymentSuccessEvent successEvent =
+                    PaymentSuccessEvent.builder()
+                            .paymentId(payment.getId())
+                            .orderId(payment.getOrderId())
+                            .userId(payment.getUserId())
+                            .amount(payment.getAmount())
+                            .transactionId(payment.getTransactionId())
+                            .paymentMethod(payment.getPaymentMethod())
+                            .paymentStatus(PaymentStatus.SUCCESS)
+                            .paidAt(LocalDateTime.now())
+                            .items(event.getItems())
+                            .build();
 
-                    orderServiceUrl
-                            + "/api/orders/"
-                            + payment.getOrderId()
-                            + "/payment-success",
+            eventPublisher.publishPaymentSuccess(successEvent);
 
-                    null,
-
-                    Object.class
-
-            );
-
-        } catch (Exception ex) {
-
-            payment.setStatus(PaymentStatus.FAILED);
-
-            restTemplate.postForObject(
-
-                    orderServiceUrl
-                            + "/api/orders/"
-                            + payment.getOrderId()
-                            + "/payment-failed",
-
-                    null,
-
-                    Object.class
-
-            );
+            System.out.println("=================================");
+            System.out.println("PAYMENT SUCCESS");
+            System.out.println(successEvent);
+            System.out.println("=================================");
 
         }
+        catch (Exception ex) {
 
-        payment.setUpdatedAt(LocalDateTime.now());
+            PaymentFailedEvent failedEvent =
+                    PaymentFailedEvent.builder()
+                            .orderId(event.getOrderId())
+                            .userId(event.getUserId())
+                            .amount(event.getTotalAmount())
+                            .paymentMethod("UPI")
+                            .reason(ex.getMessage())
+                            .paymentStatus(PaymentStatus.FAILED)
+                            .failedAt(LocalDateTime.now())
+                            .items(event.getItems())
+                            .build();
 
-        paymentRepository.save(payment);
+            eventPublisher.publishPaymentFailed(failedEvent);
 
-        return toResponse(payment);
-
-    }
-
-    public PaymentResponse getPayment(Long id) {
-
-        Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Payment not found."));
-
-        return toResponse(payment);
-
-    }
-
-    public List<PaymentResponse> getAllPayments() {
-
-        return paymentRepository
-                .findAllByOrderByCreatedAtDesc()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-
-    }
-
-    public List<PaymentResponse> getPaymentsByUser(Long userId) {
-
-        return paymentRepository
-                .findByUserIdOrderByCreatedAtDesc(userId)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-
-    }
-
-    public PaymentResponse getPaymentByOrderId(Long orderId) {
-
-        Payment payment = paymentRepository
-                .findByOrderId(orderId)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Payment not found for order."
-                        ));
-
-        return toResponse(payment);
-
-    }
-
-    public PaymentResponse refundPayment(Long paymentId) {
-
-        Payment payment = paymentRepository
-                .findById(paymentId)
-                .orElseThrow(() ->
-                        new RuntimeException("Payment not found."));
-
-        if (payment.getStatus() != PaymentStatus.SUCCESS) {
-
-            throw new RuntimeException(
-                    "Only successful payments can be refunded."
-            );
-
+            System.out.println("=================================");
+            System.out.println("PAYMENT FAILED");
+            System.out.println(failedEvent);
+            System.out.println("=================================");
         }
 
-        payment.setStatus(PaymentStatus.REFUNDED);
-        payment.setUpdatedAt(LocalDateTime.now());
-
-        paymentRepository.save(payment);
-
-        return toResponse(payment);
-
-    }
-
-    private OrderSummary getOrder(Long orderId) {
-
-        OrderSummary order =
-                restTemplate.getForObject(
-                        orderServiceUrl + "/api/orders/" + orderId,
-                        OrderSummary.class
-                );
-
-        System.out.println("=================================");
-        System.out.println("Order received from Order Service");
-        System.out.println("ID      : " + order.getId());
-        System.out.println("USER ID : " + order.getUserId());
-        System.out.println("AMOUNT  : " + order.getTotalAmount());
-        System.out.println("STATUS  : " + order.getStatus());
-        System.out.println("=================================");
-
-        if (order == null) {
-            throw new RuntimeException("Order not found.");
-        }
-
-        return order;
     }
 
     private String generateTransactionId() {
 
-        return "TXN-"
-                + System.currentTimeMillis();
-
-    }
-
-    private PaymentResponse toResponse(Payment payment) {
-
-        return PaymentResponse.builder()
-
-                .id(payment.getId())
-
-                .orderId(payment.getOrderId())
-
-                .userId(payment.getUserId())
-
-                .amount(payment.getAmount())
-
-                .paymentMethod(payment.getPaymentMethod())
-
-                .status(payment.getStatus().name())
-
-                .transactionId(payment.getTransactionId())
-
-                .createdAt(payment.getCreatedAt())
-
-                .updatedAt(payment.getUpdatedAt())
-
-                .build();
+        return "TXN-" + System.currentTimeMillis();
 
     }
 

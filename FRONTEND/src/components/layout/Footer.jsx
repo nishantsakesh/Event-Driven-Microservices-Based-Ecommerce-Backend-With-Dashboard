@@ -1,14 +1,42 @@
-function Footer() {
+import Container from "../ui/Container";
+import Divider from "../ui/Divider";
+import Logo from "./Logo";
+import FooterLinks from "./FooterLinks";
+import Newsletter from "./Newsletter";
+
+export default function Footer() {
     return (
-        <footer className="border-t border-white/10 bg-black px-8 py-12 text-gray-500">
-            <div className="mx-auto flex max-w-[1440px] flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <p className="text-sm tracking-[6px] text-white">AUDIOHUB</p>
-                <p className="max-w-xl text-sm leading-6">
-                    Genuine audio products from trusted brands, curated for every budget without losing the premium feel.
+        <footer className="mt-32 border-t border-white/10 py-16">
+
+            <Container>
+
+                <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
+
+                    <div>
+
+                        <Logo />
+
+                        <p className="mt-4 max-w-md text-slate-400">
+                            Premium audio marketplace built with
+                            Spring Boot Microservices and React.
+                        </p>
+
+                    </div>
+
+                    <FooterLinks />
+
+                    <Newsletter />
+
+                </div>
+
+                <Divider className="my-10" />
+
+                <p className="text-center text-slate-500">
+                    © 2026 AudioHub. All rights reserved.
                 </p>
-            </div>
+
+            </Container>
+
         </footer>
     );
 }
-
-export default Footer;

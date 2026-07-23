@@ -1,5 +1,4 @@
 package com.ecommerce.inventory_service.entity;
-import jakarta.validation.constraints.PositiveOrZero;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "inventory")
+@Table(name = "inventory_transactions")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,18 +18,17 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    private Long orderId;
+
+    private Long userId;
+
     private Long productId;
 
-    @Column(nullable = false)
-    private Integer availableStock;
+    private Integer quantity;
 
-    @Column(nullable = false)
-    @PositiveOrZero
-    private Integer reservedStock;
+    @Enumerated(EnumType.STRING)
+    private InventoryStatus status;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+    private LocalDateTime processedAt;
 
 }

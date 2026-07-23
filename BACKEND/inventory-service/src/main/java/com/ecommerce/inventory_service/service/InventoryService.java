@@ -1,16 +1,19 @@
 package com.ecommerce.inventory_service.service;
 
-import com.ecommerce.inventory_service.dto.InventoryRequest;
-import com.ecommerce.inventory_service.dto.InventoryResponse;
-import com.ecommerce.inventory_service.dto.StockUpdateRequest;
+import com.ecommerce.common.events.InventoryFailedEvent;
+import com.ecommerce.common.events.InventoryReservedEvent;
+import com.ecommerce.common.events.OrderItemEvent;
+import com.ecommerce.common.events.PaymentSuccessEvent;
 import com.ecommerce.inventory_service.entity.Inventory;
+import com.ecommerce.inventory_service.entity.InventoryStatus;
+import com.ecommerce.inventory_service.messaging.EventPublisher;
 import com.ecommerce.inventory_service.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,173 +21,91 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
 
-    public List<InventoryResponse> getAllInventory() {
+    private final RestTemplate restTemplate;
 
-        return inventoryRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    private final EventPublisher eventPublisher;
 
-    }
+    @Value("${product.service.url}")
+    private String productServiceUrl;
 
-    public InventoryResponse getByProductId(Long productId) {
+    public void reserveInventory(
+            PaymentSuccessEvent event) {
 
-        Inventory inventory = inventoryRepository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new RuntimeException("Inventory not found for product: " + productId));
+        try {
 
-        return toResponse(inventory);
+            for (OrderItemEvent item : event.getItems()) {
 
-    }
+                String url =
+                        productServiceUrl +
+                                "/api/products/"
+                                + item.getProductId()
+                                + "/reduce-stock/"
+                                + item.getQuantity();
 
-    public InventoryResponse createInventory(InventoryRequest request) {
+                restTemplate.put(
+                        url,
+                        null
+                );
 
-        if (inventoryRepository.existsByProductId(request.getProductId())) {
-            throw new RuntimeException("Inventory already exists for this product.");
+                Inventory inventory =
+                        Inventory.builder()
+                                .orderId(event.getOrderId())
+                                .userId(event.getUserId())
+                                .productId(item.getProductId())
+                                .quantity(item.getQuantity())
+                                .status(InventoryStatus.RESERVED)
+                                .processedAt(LocalDateTime.now())
+                                .build();
+
+                inventoryRepository.save(inventory);
+
+            }
+
+            InventoryReservedEvent reservedEvent =
+                    InventoryReservedEvent.builder()
+                            .orderId(event.getOrderId())
+                            .userId(event.getUserId())
+                            .items(event.getItems())
+                            .reservedAt(LocalDateTime.now())
+                            .build();
+
+            eventPublisher.publishInventoryReservedEvent(
+                    reservedEvent
+            );
+
+            System.out.println("--------------------------------");
+            System.out.println("INVENTORY RESERVED");
+            System.out.println("--------------------------------");
+
         }
 
-        LocalDateTime now = LocalDateTime.now();
+        catch (Exception ex) {
 
-        Inventory inventory = Inventory.builder()
-                .productId(request.getProductId())
-                .availableStock(request.getAvailableStock())
-                .reservedStock(0)
-                .createdAt(now)
-                .updatedAt(now)
-                .build();
+            ex.printStackTrace();
 
-        return toResponse(
-                inventoryRepository.save(inventory)
-        );
+            InventoryFailedEvent failedEvent =
+                    InventoryFailedEvent.builder()
+                            .orderId(event.getOrderId())
+                            .userId(event.getUserId())
+                            .items(event.getItems())
+                            .reason(
+                                    ex.getMessage() != null
+                                            ? ex.getMessage()
+                                            : ex.toString()
+                            )
+                            .failedAt(LocalDateTime.now())
+                            .build();
 
-    }
+            eventPublisher.publishInventoryFailedEvent(
+                    failedEvent
+            );
 
-    public InventoryResponse updateStock(Long productId,
-                                         StockUpdateRequest request) {
+            System.out.println("--------------------------------");
+            System.out.println("INVENTORY FAILED");
+            System.out.println(ex.getMessage());
+            System.out.println("--------------------------------");
 
-        Inventory inventory = inventoryRepository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new RuntimeException("Inventory not found for product: " + productId));
-
-        inventory.setAvailableStock(request.getAvailableStock());
-        inventory.setUpdatedAt(LocalDateTime.now());
-
-        return toResponse(
-                inventoryRepository.save(inventory)
-        );
-
-    }
-
-    public InventoryResponse reserveStock(Long productId,
-                                          int quantity) {
-
-        Inventory inventory = inventoryRepository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new RuntimeException("Inventory not found for product: " + productId));
-
-        if (quantity <= 0) {
-            throw new RuntimeException("Quantity must be greater than zero.");
         }
-
-        if (inventory.getAvailableStock() < quantity) {
-            throw new RuntimeException("Insufficient available stock.");
-        }
-
-        inventory.setAvailableStock(
-                inventory.getAvailableStock() - quantity
-        );
-
-        inventory.setReservedStock(
-                inventory.getReservedStock() + quantity
-        );
-
-        inventory.setUpdatedAt(LocalDateTime.now());
-
-        return toResponse(
-                inventoryRepository.save(inventory)
-        );
-
-    }
-
-    public InventoryResponse releaseStock(Long productId,
-                                          int quantity) {
-
-        Inventory inventory = inventoryRepository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new RuntimeException("Inventory not found for product: " + productId));
-
-        if (quantity <= 0) {
-            throw new RuntimeException("Quantity must be greater than zero.");
-        }
-
-        if (inventory.getReservedStock() < quantity) {
-            throw new RuntimeException("Reserved stock is insufficient.");
-        }
-
-        inventory.setAvailableStock(
-                inventory.getAvailableStock() + quantity
-        );
-
-        inventory.setReservedStock(
-                inventory.getReservedStock() - quantity
-        );
-
-        inventory.setUpdatedAt(LocalDateTime.now());
-
-        return toResponse(
-                inventoryRepository.save(inventory)
-        );
-
-    }
-
-    public InventoryResponse confirmStock(Long productId,
-                                          int quantity) {
-
-        Inventory inventory = inventoryRepository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new RuntimeException("Inventory not found for product: " + productId));
-
-        if (quantity <= 0) {
-            throw new RuntimeException("Quantity must be greater than zero.");
-        }
-
-        if (inventory.getReservedStock() < quantity) {
-            throw new RuntimeException("Reserved stock is insufficient.");
-        }
-
-        inventory.setReservedStock(
-                inventory.getReservedStock() - quantity
-        );
-
-        inventory.setUpdatedAt(LocalDateTime.now());
-
-        return toResponse(
-                inventoryRepository.save(inventory)
-        );
-
-    }
-
-    public String deleteInventory(Long productId) {
-
-        Inventory inventory = inventoryRepository.findByProductId(productId)
-                .orElseThrow(() ->
-                        new RuntimeException("Inventory not found for product: " + productId));
-
-        inventoryRepository.delete(inventory);
-
-        return "Inventory deleted successfully.";
-
-    }
-
-    private InventoryResponse toResponse(Inventory inventory) {
-
-        return InventoryResponse.builder()
-                .id(inventory.getId())
-                .productId(inventory.getProductId())
-                .availableStock(inventory.getAvailableStock())
-                .reservedStock(inventory.getReservedStock())
-                .updatedAt(inventory.getUpdatedAt())
-                .build();
 
     }
 

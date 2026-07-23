@@ -25,7 +25,7 @@ public class Payment {
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
     @Column(nullable = false)
@@ -35,11 +35,13 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String transactionId;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
 }

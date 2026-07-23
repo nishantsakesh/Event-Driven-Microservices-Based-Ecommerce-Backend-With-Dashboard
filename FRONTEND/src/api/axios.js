@@ -1,9 +1,35 @@
 import axios from "axios";
 
-export const authApi = axios.create({
-    baseURL: "http://localhost:8081/api/auth"
+const api = axios.create({
+  baseURL: "http://localhost:8080",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-export const productApi = axios.create({
-    baseURL: "http://localhost:8082/api/products"
-});
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;

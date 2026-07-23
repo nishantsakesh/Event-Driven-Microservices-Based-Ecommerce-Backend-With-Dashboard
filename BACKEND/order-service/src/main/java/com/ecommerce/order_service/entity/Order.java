@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ecommerce.common.enums.OrderStatus;
+
 @Entity
 @Table(name = "orders")
 @Getter
@@ -43,5 +45,7 @@ public class Order {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    
 
 }
