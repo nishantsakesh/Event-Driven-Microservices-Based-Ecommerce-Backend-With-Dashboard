@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -20,4 +22,8 @@ public class ProductResponse {
     private Integer quantity;
     private String description;
     private String imageUrl;
+    private List<String> features;
+    private Map<String, String> specifications;
+    private List<String> whatsInTheBox;
+    private List<String> highlights;
 }

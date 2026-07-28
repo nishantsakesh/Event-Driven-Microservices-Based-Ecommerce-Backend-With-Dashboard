@@ -30,10 +30,12 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<Product>> getAllProducts(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category) {
 
         return ResponseEntity.ok(
-                productService.getAllProducts()
+                productService.getAllProducts(search, category)
         );
 
     }

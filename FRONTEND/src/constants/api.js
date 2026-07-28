@@ -1,19 +1,10 @@
-export const API = Object.freeze({
-    AUTH: "/auth",
-
-    USERS: "/users",
-
-    PRODUCTS: "/products",
-
-    CATEGORIES: "/categories",
-
-    CART: "/cart",
-
-    ORDERS: "/orders",
-
-    PAYMENTS: "/payments",
-
-    NOTIFICATIONS: "/notifications",
-
-    DASHBOARD: "/dashboard",
-});
+export const API = {
+  AUTH: "/api/auth",
+  PRODUCTS: "/api/products",
+  CATEGORIES: "/api/categories",
+  INVENTORY: "/api/inventory",
+  ORDERS: "/api/orders",
+  PAYMENTS: "/api/payments",
+  NOTIFICATIONS: "/api/notifications",
+  USERS: "/api/auth/users",
+};

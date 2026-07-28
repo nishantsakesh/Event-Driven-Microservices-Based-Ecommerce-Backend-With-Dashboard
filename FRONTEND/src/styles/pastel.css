@@ -1,0 +1,72 @@
+@layer utilities {
+  /* High-End Luxury Coolors Palette */
+  .bg-ink-black { background-color: #04151F; }
+  .bg-dark-slate { background-color: #183A37; }
+  .bg-wheat { background-color: #EFD6AC; }
+  .bg-burnt-orange { background-color: #C44900; }
+  .bg-midnight-violet { background-color: #432534; }
+
+  /* Text Colors */
+  .text-ink-black { color: #04151F; }
+  .text-dark-slate { color: #183A37; }
+  .text-wheat { color: #EFD6AC; }
+  .text-burnt-orange { color: #C44900; }
+  .text-midnight-violet { color: #432534; }
+
+  /* Gradient Text Tokens */
+  .gradient-text-pastel {
+    background: linear-gradient(135deg, #04151F 0%, #183A37 50%, #C44900 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .dark .gradient-text-pastel {
+    background: linear-gradient(135deg, #EFD6AC 0%, #E39774 50%, #C44900 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Luxury Glass Cards */
+  .pastel-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(4, 21, 31, 0.05);
+    box-shadow: 0 15px 35px -10px rgba(4, 21, 31, 0.04);
+    border-radius: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dark .pastel-card {
+    background: #04151F;
+    border: 1px solid rgba(239, 214, 172, 0.05);
+    box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+    border-radius: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pastel-pill {
+    padding: 0.35rem 1rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .pastel-pill-purple {
+    background: #183A37;
+    color: #EFD6AC;
+  }
+
+  .pastel-pill-mint {
+    background: rgba(196, 73, 0, 0.1);
+    color: #C44900;
+  }
+
+  .pastel-pill-pink {
+    background: rgba(67, 37, 52, 0.1);
+    color: #432534;
+  }
+}

@@ -9,7 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-
+import java.util.List;
+import java.util.Map;
 
 import com.ecommerce.auth_service.security.JwtService;
 
@@ -79,6 +80,23 @@ public class AuthService {
                 user.getEmail(),
                 user.getRole().name()
         );
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+    }
+
+    public Map<String, String> refreshToken() {
+        return Map.of("message", "Token refreshed successfully");
+    }
+
+    public Map<String, String> logout() {
+        return Map.of("message", "Logged out successfully");
     }
 
 }

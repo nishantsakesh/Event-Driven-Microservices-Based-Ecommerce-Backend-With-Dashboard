@@ -1,35 +1,29 @@
 import axios from "axios";
+import { useAuthStore } from "@/stores/authStore";
 
-const api = axios.create({
-  baseURL: "http://localhost:8080",
-  timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "",
+  headers: { "Content-Type": "application/json" },
+  timeout: 15000,
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
+apiClient.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-api.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
+      useAuthStore.getState().logout();
+      window.location.href = "/login";
     }
-
     return Promise.reject(error);
   }
 );
 
-export default api;
+export default apiClient;

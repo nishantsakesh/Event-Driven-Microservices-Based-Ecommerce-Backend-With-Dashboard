@@ -6,7 +6,7 @@ import com.ecommerce.common.events.OrderCreatedEvent;
 import com.ecommerce.order_service.dto.OrderItemResponse;
 import com.ecommerce.order_service.dto.OrderRequest;
 import com.ecommerce.order_service.dto.OrderResponse;
-import com.ecommerce.order_service.dto.ProductResponse;
+import com.ecommerce.common.dto.ProductResponse;
 import com.ecommerce.order_service.entity.Order;
 import com.ecommerce.order_service.entity.OrderItem;
 import com.ecommerce.order_service.messaging.EventPublisher;
@@ -127,12 +127,8 @@ public class OrderService {
                 .orElseThrow(() ->
                         new RuntimeException("Order not found"));
 
-        if (order.getStatus() == OrderStatus.ORDER_CONFIRMED) {
-
-            throw new RuntimeException(
-                    "Confirmed orders cannot be cancelled."
-            );
-
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            return toResponse(order);
         }
 
         order.setStatus(OrderStatus.CANCELLED);
@@ -141,6 +137,20 @@ public class OrderService {
         orderRepository.save(order);
 
         return toResponse(order);
+
+    }
+
+    public void updateOrderStatus(Long orderId, OrderStatus newStatus) {
+
+        Order order = orderRepository
+                .findById(orderId)
+                .orElseThrow(() ->
+                        new RuntimeException("Order not found: " + orderId));
+
+        order.setStatus(newStatus);
+        order.setUpdatedAt(LocalDateTime.now());
+
+        orderRepository.save(order);
 
     }
 

@@ -52,7 +52,16 @@ services:
     container_name: api-gateway
 
     ports:
-      - "8080:8080"
+      - "8888:8888"
+
+    environment:
+      SERVER_PORT: 8888
+      AUTH_SERVICE_URL: http://auth-service:8081
+      PRODUCT_SERVICE_URL: http://product-service:8082
+      INVENTORY_SERVICE_URL: http://inventory-service:8083
+      ORDER_SERVICE_URL: http://order-service:8084
+      PAYMENT_SERVICE_URL: http://payment-service:8085
+      NOTIFICATION_SERVICE_URL: http://notification-service:8087
 
     depends_on:
       rabbitmq:
@@ -88,7 +97,7 @@ services:
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin
 
-      JWT_SECRET: your-secret-key
+      JWT_SECRET: AudioHubSecretKeyForJwtAuthenticationMinimum32CharsLongSecretKey!
       JWT_EXPIRATION: 86400000
 
     restart: unless-stopped

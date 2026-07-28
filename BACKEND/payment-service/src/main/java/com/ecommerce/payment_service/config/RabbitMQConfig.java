@@ -43,6 +43,18 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Binding inventoryFailedBinding(
+            Queue paymentQueue,
+            TopicExchange exchange) {
+
+        return BindingBuilder
+                .bind(paymentQueue)
+                .to(exchange)
+                .with(RabbitMQConstants.INVENTORY_FAILED);
+
+    }
+
+    @Bean
     public MessageConverter messageConverter() {
 
         return new Jackson2JsonMessageConverter();

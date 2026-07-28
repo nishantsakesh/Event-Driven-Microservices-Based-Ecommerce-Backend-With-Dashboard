@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -37,4 +39,12 @@ public class ProductRequest {
     private String description;
 
     private String imageUrl;
+
+    private List<String> features;
+
+    private Map<String, String> specifications;
+
+    private List<String> whatsInTheBox;
+
+    private List<String> highlights;
 }

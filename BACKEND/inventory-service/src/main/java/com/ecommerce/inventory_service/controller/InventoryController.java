@@ -21,4 +21,18 @@ public class InventoryController {
 
     }
 
+    @GetMapping("/{id}")
+    public Inventory getById(@PathVariable Long id) {
+        return inventoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+    }
+
+    @GetMapping("/order/{orderId}")
+    public List<Inventory> getByOrderId(@PathVariable Long orderId) {
+        return inventoryRepository.findByOrderId(orderId);
+    }
+
+    @GetMapping("/product/{productId}")
+    public List<Inventory> getByProductId(@PathVariable Long productId) {
+        return inventoryRepository.findByProductId(productId);
+    }
 }
