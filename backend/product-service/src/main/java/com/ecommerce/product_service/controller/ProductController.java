@@ -11,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/products")
@@ -20,13 +24,37 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponse> addProduct(
+    public ResponseEntity<Map<String, Object>> addProduct(
             @Valid @RequestBody ProductRequest request) {
+
+        Product saved = productService.addProduct(request);
+
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("_id", saved.getId() != null ? saved.getId().toString() : "");
+        data.put("name", saved.getName());
+        data.put("brand", saved.getBrand());
+        data.put("category", saved.getCategory() != null ? saved.getCategory().name().toLowerCase() : "");
+        data.put("price", saved.getPrice());
+        data.put("stockQuantity", saved.getQuantity());
+        data.put("imageUrl", saved.getImageUrl());
+        data.put("description", saved.getDescription());
+        data.put("features", saved.getFeatures() != null ? saved.getFeatures() : new ArrayList<>());
+        data.put("highlights", saved.getHighlights() != null ? saved.getHighlights() : new ArrayList<>());
+        data.put("whatsInTheBox", saved.getWhatsInTheBox() != null ? saved.getWhatsInTheBox() : new ArrayList<>());
+
+        data.put("technicalSpecifications", saved.getTechnicalSpecifications() != null ? saved.getTechnicalSpecifications() : new ArrayList<>());
+        data.put("createdAt", saved.getCreatedAt());
+        data.put("updatedAt", saved.getUpdatedAt());
+        data.put("__v", 0);
+
+        Map<String, Object> responseBody = new LinkedHashMap<>();
+        responseBody.put("success", true);
+        responseBody.put("message", "Product created successfully");
+        responseBody.put("data", data);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(productService.addProduct(request));
-
+                .body(responseBody);
     }
 
     @GetMapping

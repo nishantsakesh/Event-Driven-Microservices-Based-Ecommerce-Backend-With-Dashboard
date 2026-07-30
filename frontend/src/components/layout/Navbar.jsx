@@ -32,8 +32,8 @@ export default function Navbar() {
           </Link>
         </div>
       )}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16 md:h-20">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2">
               <span className="text-xl font-black tracking-tight text-[#04151F] dark:text-[#EFD6AC]">

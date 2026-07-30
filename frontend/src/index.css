@@ -5,18 +5,41 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
+  /* Premium Studio Color Swatch Board */
+  --color-premium-void: #050505;
+  --color-premium-charcoal: #0B0B0C;
+  --color-premium-surface: #131316;
+  --color-premium-slate: #183A37;
+  --color-premium-wheat: #E5C697;
+  --color-premium-gold: #C48A45;
+  --color-premium-plum: #261620;
+  --color-premium-cement: #8A8A93;
+
+  /* Backward Compatibility if needed temporarily */
   --color-void: #050505;
   --color-tube-amber: #FF9F0A;
   --color-ref-teal: #00E5FF;
-  
   --color-primary: #FF9F0A;
   --color-accent: #00E5FF;
+}
+
+:root {
+  /* Ambient Audio-Ecommerce Theme Palette */
+  --bg-primary: #050505;       /* Migrated to Void */
+  --bg-surface: #0B0B0C;       /* Migrated to Charcoal */
+  --text-main: #E5C697;        /* Migrated to Wheat */
+  --text-muted: #8A8A93;       /* Migrated to Cement */
+  --accent-brand: #C48A45;     /* Migrated to Brushed Gold */
+  
+  /* Layout Proportions */
+  --input-radius: 4px;         /* Crisp rounded corners */
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Base */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+  scrollbar-color: rgba(196, 138, 69, 0.3) transparent; /* Gold scrollbar */
 }
 
 *::-webkit-scrollbar {
@@ -28,12 +51,12 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
+  background: rgba(196, 138, 69, 0.3);
   border-radius: 3px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.5);
+  background: rgba(196, 138, 69, 0.5);
 }
 
 html, body {
@@ -43,14 +66,28 @@ html, body {
 
 body {
   font-family: var(--font-sans);
-  background: var(--color-void);
-  color: #8E8E93;
+  background: var(--color-premium-void);
+  color: var(--color-premium-cement);
   min-height: 100vh;
 }
 
 .dark body {
-  background: var(--color-void);
-  color: #8E8E93;
+  background: var(--color-premium-void);
+  color: var(--color-premium-cement);
+}
+
+p {
+  color: var(--color-premium-cement);
+}
+
+input, textarea, select {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: rgba(196, 138, 69, 0.4) !important; /* Gold 40% */
+  color: var(--color-premium-wheat) !important;
 }
 
 .font-serif-accent {
@@ -175,3 +212,50 @@ body {
 .status-warning { color: #f59e0b; }
 .status-info { color: #3b82f6; }
 .status-pending { color: #a855f7; }
+
+/* Premium Newsletter Input */
+.footer-newsletter-input {
+  background-color: var(--color-premium-charcoal);
+  border: 1px solid rgba(24, 58, 55, 0.15);
+  color: var(--color-premium-cement);
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  transition: var(--transition-smooth);
+}
+
+.footer-newsletter-input:focus {
+  border-color: rgba(196, 138, 69, 0.4);
+  color: var(--color-premium-wheat);
+  outline: none;
+}
+
+/* Admin Modal Form Container */
+.admin-modal-card {
+  width: 100%;
+  max-width: 600px;           
+  background-color: var(--color-premium-surface);   
+  border: 1px solid rgba(24, 58, 55, 0.15);   
+  border-radius: 8px;
+  padding: 2rem;
+  
+  max-height: 85vh;            
+  overflow-y: auto;            
+}
+
+.admin-modal-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-modal-card::-webkit-scrollbar-track {
+  background: var(--color-premium-charcoal);         
+  border-radius: 8px;
+}
+
+.admin-modal-card::-webkit-scrollbar-thumb {
+  background: rgba(24, 58, 55, 0.5);         
+  border-radius: 8px;
+}
+
+.admin-modal-card::-webkit-scrollbar-thumb:hover {
+  background: var(--color-premium-gold);         
+}

@@ -37,9 +37,11 @@ export default function Products() {
     setHighlights(product?.highlights || []);
     setWhatsInTheBox(product?.whatsInTheBox || []);
     setSpecs(
-      product?.specifications
-        ? Object.entries(product.specifications).map(([key, value]) => ({ key, value }))
-        : []
+      product?.technicalSpecifications
+        ? product.technicalSpecifications
+        : (product?.specifications 
+            ? Object.entries(product.specifications).map(([key, value]) => ({ key, value }))
+            : [])
     );
     setIsModalOpen(true);
   };
@@ -73,10 +75,7 @@ export default function Products() {
       features: features.filter(f => f.trim() !== ''),
       highlights: highlights.filter(h => h.trim() !== ''),
       whatsInTheBox: whatsInTheBox.filter(w => w.trim() !== ''),
-      specifications: specs.reduce((acc, curr) => {
-        if (curr.key.trim() && curr.value.trim()) acc[curr.key.trim()] = curr.value.trim();
-        return acc;
-      }, {})
+      technicalSpecifications: specs.filter(s => s.key.trim() && s.value.trim())
     };
 
     try {
@@ -109,7 +108,7 @@ export default function Products() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Products Management</h1>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-premium-gold text-premium-void font-bold tracking-widest uppercase text-xs rounded-lg hover:opacity-90 transition-opacity"
         >
           <Plus className="w-4 h-4" />
           Add Product
@@ -258,7 +257,7 @@ export default function Products() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden"
+              className="admin-modal-card relative"
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -272,11 +271,11 @@ export default function Products() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                    <input name="name" defaultValue={selectedProduct?.name} required className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input name="name" defaultValue={selectedProduct?.name} required className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Brand</label>
-                    <input name="brand" defaultValue={selectedProduct?.brand} required className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input name="brand" defaultValue={selectedProduct?.brand} required className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
@@ -284,7 +283,7 @@ export default function Products() {
                       name="category" 
                       defaultValue={selectedProduct?.category || ''} 
                       required 
-                      className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none"
                     >
                       <option value="" disabled className="bg-white dark:bg-gray-800 text-gray-500">Select Category</option>
                       {CATEGORIES.map(c => (
@@ -296,26 +295,26 @@ export default function Products() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price ($)</label>
-                    <input type="number" step="0.01" min="0.01" name="price" defaultValue={selectedProduct?.price} required className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input type="number" step="0.01" min="0.01" name="price" defaultValue={selectedProduct?.price} required className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Stock Quantity</label>
-                    <input type="number" min="1" name="quantity" defaultValue={selectedProduct?.quantity ?? selectedProduct?.stockQuantity ?? 10} required className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input type="number" min="1" name="quantity" defaultValue={selectedProduct?.quantity ?? selectedProduct?.stockQuantity ?? 10} required className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none" />
                   </div>
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image URL</label>
-                    <input name="imageUrl" defaultValue={selectedProduct?.imageUrl} className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input name="imageUrl" defaultValue={selectedProduct?.imageUrl} className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none" />
                   </div>
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                    <textarea name="description" defaultValue={selectedProduct?.description} rows="3" required className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    <textarea name="description" defaultValue={selectedProduct?.description} rows="3" required className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none"></textarea>
                   </div>
                   
                   {/* Dynamic Features */}
                   <div className="col-span-2 border-t border-gray-100 dark:border-gray-700 pt-4">
                     <div className="flex justify-between items-center mb-2">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Features</label>
-                      <button type="button" onClick={() => setFeatures([...features, ''])} className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Feature</button>
+                      <button type="button" onClick={() => setFeatures(prev => [...prev, ''])} className="text-xs text-premium-gold hover:text-premium-wheat flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Feature</button>
                     </div>
                     <div className="space-y-2">
                       {features.map((feat, idx) => (
@@ -336,7 +335,7 @@ export default function Products() {
                   <div className="col-span-2 border-t border-gray-100 dark:border-gray-700 pt-4">
                     <div className="flex justify-between items-center mb-2">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Highlights</label>
-                      <button type="button" onClick={() => setHighlights([...highlights, ''])} className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Highlight</button>
+                      <button type="button" onClick={() => setHighlights(prev => [...prev, ''])} className="text-xs text-premium-gold hover:text-premium-wheat flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Highlight</button>
                     </div>
                     <div className="space-y-2">
                       {highlights.map((item, idx) => (
@@ -357,7 +356,7 @@ export default function Products() {
                   <div className="col-span-2 border-t border-gray-100 dark:border-gray-700 pt-4">
                     <div className="flex justify-between items-center mb-2">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">What's In The Box</label>
-                      <button type="button" onClick={() => setWhatsInTheBox([...whatsInTheBox, ''])} className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Item</button>
+                      <button type="button" onClick={() => setWhatsInTheBox(prev => [...prev, ''])} className="text-xs text-premium-gold hover:text-premium-wheat flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Item</button>
                     </div>
                     <div className="space-y-2">
                       {whatsInTheBox.map((item, idx) => (
@@ -378,7 +377,7 @@ export default function Products() {
                   <div className="col-span-2 border-t border-gray-100 dark:border-gray-700 pt-4">
                     <div className="flex justify-between items-center mb-2">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Technical Specifications</label>
-                      <button type="button" onClick={() => setSpecs([...specs, {key:'', value:''}])} className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Spec</button>
+                      <button type="button" onClick={() => setSpecs(prev => [...prev, {key:'', value:''}])} className="text-xs text-premium-gold hover:text-premium-wheat flex items-center gap-1 font-semibold"><Plus className="w-3 h-3"/> Add Spec</button>
                     </div>
                     <div className="space-y-2">
                       {specs.map((spec, idx) => (
@@ -401,8 +400,8 @@ export default function Products() {
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="button" onClick={handleCloseModal} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Cancel</button>
-                  <button type="submit" disabled={createProduct.isPending || updateProduct.isPending} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-50">
+                  <button type="button" onClick={handleCloseModal} className="px-4 py-2 text-sm font-medium text-premium-cement bg-premium-charcoal hover:bg-premium-charcoal/80 border border-premium-slate/20 rounded-lg">Cancel</button>
+                  <button type="submit" disabled={createProduct.isPending || updateProduct.isPending} className="px-4 py-2 text-sm font-medium text-premium-void bg-premium-gold hover:opacity-90 rounded-lg disabled:opacity-50 tracking-widest uppercase">
                     {createProduct.isPending || updateProduct.isPending ? 'Saving...' : 'Save Product'}
                   </button>
                 </div>

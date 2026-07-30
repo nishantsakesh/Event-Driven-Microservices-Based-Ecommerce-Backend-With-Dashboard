@@ -3,10 +3,15 @@ package com.ecommerce.product_service.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import org.hibernate.annotations.Type;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "products")
@@ -38,16 +43,21 @@ public class Product {
     @Column(length = 2000)
     private String imageUrl;
 
-    @ElementCollection
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
     private List<String> features;
 
-    @ElementCollection
-    private Map<String, String> specifications;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    @JsonProperty("technicalSpecifications")
+    private List<Map<String, String>> technicalSpecifications;
 
-    @ElementCollection
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
     private List<String> whatsInTheBox;
 
-    @ElementCollection
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
     private List<String> highlights;
 
     private LocalDateTime createdAt;

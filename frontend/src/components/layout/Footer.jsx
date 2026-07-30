@@ -4,72 +4,73 @@ import { Headphones, Globe, Share2, MessageCircle, Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-neutral-950 border-t border-white/10 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-cyan-500">
-                AUDIOHUB
-              </span>
-            </Link>
-            <p className="text-neutral-400 text-sm leading-relaxed">
-              Premium audio equipment for audiophiles and professionals. Experience sound like never before with our curated collection.
+    <footer className="bg-premium-void border-t border-premium-slate/15 pt-20 pb-10 font-sans">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          {/* Products Column */}
+          <div>
+            <h3 className="text-white font-bold tracking-widest text-xs uppercase mb-6">Products</h3>
+            <ul className="space-y-4">
+              <li><Link to="/products?category=HEADPHONE" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Headphones</Link></li>
+              <li><Link to="/products?category=EARPHONE" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Earbuds</Link></li>
+              <li><Link to="/products?category=SPEAKER" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Speakers</Link></li>
+            </ul>
+          </div>
+          
+          {/* Support Column */}
+          <div>
+            <h3 className="text-white font-bold tracking-widest text-xs uppercase mb-6">Support</h3>
+            <ul className="space-y-4">
+              <li><Link to="/contact" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Contact Us</Link></li>
+              <li><Link to="/refund" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Refund Policy</Link></li>
+              <li><Link to="/shipping" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Shipping Information</Link></li>
+            </ul>
+          </div>
+
+          {/* Company Column */}
+          <div>
+            <h3 className="text-white font-bold tracking-widest text-xs uppercase mb-6">Company</h3>
+            <ul className="space-y-4">
+              <li><Link to="/about" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">About Us</Link></li>
+              <li><Link to="/privacy" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Terms of Service</Link></li>
+            </ul>
+          </div>
+          
+          {/* Newsletter Column */}
+          <div>
+            <h3 className="text-white font-bold tracking-widest text-xs uppercase mb-6">Newsletter</h3>
+            <p className="text-premium-cement text-sm leading-relaxed mb-6">
+              Join the Inner Circle. Get exclusive access to limited-run audio drops.
             </p>
-            <div className="flex gap-4 pt-2">
-              <a href="#" className="text-neutral-400 hover:text-white transition-colors"><Globe className="w-5 h-5" /></a>
-              <a href="#" className="text-neutral-400 hover:text-white transition-colors"><Share2 className="w-5 h-5" /></a>
-              <a href="#" className="text-neutral-400 hover:text-white transition-colors"><MessageCircle className="w-5 h-5" /></a>
-              <a href="#" className="text-neutral-400 hover:text-white transition-colors"><Mail className="w-5 h-5" /></a>
-            </div>
-          </div>
-          
-          <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-3">
-              <li><Link to="/" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">Home</Link></li>
-              <li><Link to="/products" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">Products</Link></li>
-              <li><Link to="/about" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">Contact</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-white font-semibold mb-4">Categories</h3>
-            <ul className="space-y-3">
-              <li><Link to="/products?category=HEADPHONE" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">Headphones</Link></li>
-              <li><Link to="/products?category=EARPHONE" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">Earphones</Link></li>
-              <li><Link to="/products?category=SPEAKER" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">Speakers</Link></li>
-              <li><Link to="/products?category=SOUNDBAR" className="text-neutral-400 hover:text-purple-400 text-sm transition-colors">Soundbars</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-white font-semibold mb-4">Contact</h3>
-            <ul className="space-y-3 text-sm text-neutral-400">
-              <li className="flex items-start gap-3">
-                <span className="mt-0.5">📍</span>
-                <span>#42, 100 Feet Road, Indiranagar<br />Bangalore 560038, India</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <span>📞</span>
-                <span>+1 (555) 123-4567</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <span>✉️</span>
-                <span>support@audiohub.com</span>
-              </li>
-            </ul>
+            <form className="flex" onSubmit={(e) => e.preventDefault()}>
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="footer-newsletter-input flex-1 rounded-l-[4px]"
+                required
+              />
+              <button 
+                type="submit" 
+                className="bg-premium-gold text-premium-void px-6 py-3 font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-colors rounded-r-[4px]"
+              >
+                Join
+              </button>
+            </form>
           </div>
         </div>
         
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-neutral-500 text-sm">
-            &copy; {new Date().getFullYear()} AudioHub. All rights reserved.
+        <div className="pt-8 border-t border-premium-slate/15 flex flex-col md:flex-row justify-between items-center gap-4">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="text-xl font-black tracking-tighter text-white uppercase">
+              AudioHub<span className="text-premium-gold">.</span>
+            </span>
+          </Link>
+          <p className="text-premium-cement text-xs font-mono">
+            &copy; {new Date().getFullYear()} AUDIOHUB. ALL RIGHTS RESERVED.
           </p>
-          <div className="flex gap-4 text-sm text-neutral-500">
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          <div className="flex gap-4">
+            {/* Icons removed to de-clutter the baseline */}
           </div>
         </div>
       </div>

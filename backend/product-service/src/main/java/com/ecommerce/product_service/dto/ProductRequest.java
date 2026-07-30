@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,7 +44,8 @@ public class ProductRequest {
 
     private List<String> features;
 
-    private Map<String, String> specifications;
+    @JsonProperty("technicalSpecifications")
+    private List<Map<String, String>> technicalSpecifications;
 
     private List<String> whatsInTheBox;
 

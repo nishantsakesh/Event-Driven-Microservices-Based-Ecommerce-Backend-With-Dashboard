@@ -11,6 +11,12 @@ const Products = lazy(() => import('@/pages/storefront/Products'));
 const ProductDetail = lazy(() => import('@/pages/storefront/ProductDetail'));
 const Cart = lazy(() => import('@/pages/storefront/Cart'));
 const MyOrders = lazy(() => import('@/pages/storefront/MyOrders'));
+const AboutUs = lazy(() => import('@/pages/storefront/AboutUs'));
+const ContactUs = lazy(() => import('@/pages/storefront/ContactUs'));
+const TermsOfService = lazy(() => import('@/pages/storefront/TermsOfService'));
+const PrivacyPolicy = lazy(() => import('@/pages/storefront/PrivacyPolicy'));
+const RefundPolicy = lazy(() => import('@/pages/storefront/RefundPolicy'));
+const ShippingInfo = lazy(() => import('@/pages/storefront/ShippingInfo'));
 
 // Auth pages
 const Login = lazy(() => import('@/pages/auth/Login'));
@@ -56,6 +62,12 @@ export default function AppRouter() {
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/refund" element={<RefundPolicy />} />
+          <Route path="/shipping" element={<ShippingInfo />} />
           
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -17,7 +17,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductResponse addProduct(ProductRequest request) {
+    public Product addProduct(ProductRequest request) {
 
         Product product = Product.builder()
                 .name(request.getName())
@@ -27,30 +27,15 @@ public class ProductService {
                 .quantity(request.getQuantity())
                 .description(request.getDescription())
                 .imageUrl(request.getImageUrl())
-                .features(request.getFeatures())
-                .specifications(request.getSpecifications())
-                .whatsInTheBox(request.getWhatsInTheBox())
-                .highlights(request.getHighlights())
+                .features(request.getFeatures() != null ? request.getFeatures() : new java.util.ArrayList<>())
+                .technicalSpecifications(request.getTechnicalSpecifications() != null ? request.getTechnicalSpecifications() : new java.util.ArrayList<>())
+                .whatsInTheBox(request.getWhatsInTheBox() != null ? request.getWhatsInTheBox() : new java.util.ArrayList<>())
+                .highlights(request.getHighlights() != null ? request.getHighlights() : new java.util.ArrayList<>())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        Product saved = productRepository.save(product);
-
-        return ProductResponse.builder()
-                .id(saved.getId())
-                .name(saved.getName())
-                .brand(saved.getBrand())
-                .category(saved.getCategory())
-                .price(saved.getPrice())
-                .quantity(saved.getQuantity())
-                .description(saved.getDescription())
-                .imageUrl(saved.getImageUrl())
-                .features(saved.getFeatures())
-                .specifications(saved.getSpecifications())
-                .whatsInTheBox(saved.getWhatsInTheBox())
-                .highlights(saved.getHighlights())
-                .build();
+        return productRepository.save(product);
     }
 
     public List<Product> getAllProducts() {
@@ -109,10 +94,10 @@ public class ProductService {
         product.setQuantity(request.getQuantity());
         product.setDescription(request.getDescription());
         product.setImageUrl(request.getImageUrl());
-        product.setFeatures(request.getFeatures());
-        product.setSpecifications(request.getSpecifications());
-        product.setWhatsInTheBox(request.getWhatsInTheBox());
-        product.setHighlights(request.getHighlights());
+        product.setFeatures(request.getFeatures() != null ? request.getFeatures() : new java.util.ArrayList<>());
+        product.setTechnicalSpecifications(request.getTechnicalSpecifications() != null ? request.getTechnicalSpecifications() : new java.util.ArrayList<>());
+        product.setWhatsInTheBox(request.getWhatsInTheBox() != null ? request.getWhatsInTheBox() : new java.util.ArrayList<>());
+        product.setHighlights(request.getHighlights() != null ? request.getHighlights() : new java.util.ArrayList<>());
         product.setUpdatedAt(LocalDateTime.now());
 
         return productRepository.save(product);
