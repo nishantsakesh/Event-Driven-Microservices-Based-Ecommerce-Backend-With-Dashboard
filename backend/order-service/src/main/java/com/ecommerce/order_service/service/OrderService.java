@@ -48,21 +48,21 @@ public class OrderService {
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        List<OrderItem> items = request.getItems()
-                .stream()
-                .map(itemRequest -> {
+        java.util.Map<Long, Integer> productQuantities = new java.util.HashMap<>();
+        for (var itemReq : request.getItems()) {
+            productQuantities.merge(itemReq.getProductId(), itemReq.getQuantity(), Integer::sum);
+        }
 
-                    ProductResponse product =
-                            getProduct(itemRequest.getProductId());
-
+        List<OrderItem> items = productQuantities.entrySet().stream()
+                .map(entry -> {
+                    ProductResponse product = getProduct(entry.getKey());
                     return OrderItem.builder()
                             .order(order)
                             .productId(product.getId())
                             .productName(product.getName())
-                            .quantity(itemRequest.getQuantity())
+                            .quantity(entry.getValue())
                             .unitPrice(product.getPrice())
                             .build();
-
                 })
                 .collect(Collectors.toList());
 

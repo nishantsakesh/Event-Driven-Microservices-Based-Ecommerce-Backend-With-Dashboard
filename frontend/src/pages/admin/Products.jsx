@@ -294,7 +294,7 @@ export default function Products() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price ($)</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price (₹)</label>
                     <input type="number" step="0.01" min="0.01" name="price" defaultValue={selectedProduct?.price} required className="w-full px-3 py-2 rounded-lg bg-premium-charcoal border border-premium-slate/15 text-premium-cement placeholder:text-premium-cement/50 outline-none" />
                   </div>
                   <div>

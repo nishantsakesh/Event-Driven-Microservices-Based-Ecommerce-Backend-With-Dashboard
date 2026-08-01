@@ -7,7 +7,11 @@ export function cn(...inputs) {
 
 export function formatPrice(price) {
   const num = parseFloat(price);
-  return isNaN(num) ? "0.00" : num.toFixed(2);
+  if (isNaN(num)) return "₹0.00";
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(num);
 }
 
 export function formatDate(dateString) {

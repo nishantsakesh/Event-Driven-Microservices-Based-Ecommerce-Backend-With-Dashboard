@@ -180,6 +180,7 @@ export function useCreateOrder() {
     mutationFn: (data) => orderService.create(data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.USER_ORDERS });
       toast.success("Order placed successfully!");
     },
     onError: (err) =>
