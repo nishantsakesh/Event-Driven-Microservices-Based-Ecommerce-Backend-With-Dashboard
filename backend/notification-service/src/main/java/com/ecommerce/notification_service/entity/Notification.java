@@ -22,6 +22,16 @@ public class Notification {
 
     private Long userId;
 
+    private String recipientName;
+
+    private String recipientEmail;
+
+    @Builder.Default
+    private String type = "INVOICE";
+
+    private String subject;
+
+    @Column(columnDefinition = "TEXT")
     private String message;
 
     @Enumerated(EnumType.STRING)
@@ -29,4 +39,5 @@ public class Notification {
 
     private LocalDateTime sentAt;
 
+    private LocalDateTime createdAt;
 }
