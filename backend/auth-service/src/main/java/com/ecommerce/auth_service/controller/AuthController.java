@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +23,12 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/register")
-    public RegisterResponse register(@RequestBody RegisterRequest request) {
+    public RegisterResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
     }
 
@@ -49,6 +50,11 @@ public class AuthController {
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return authService.getAllUsers();
+    }
+
+    @GetMapping("/users/count")
+    public ResponseEntity<Map<String, Long>> getUserCount() {
+        return ResponseEntity.ok(Map.of("count", authService.getUserCount()));
     }
 
     @GetMapping("/users/{id}")

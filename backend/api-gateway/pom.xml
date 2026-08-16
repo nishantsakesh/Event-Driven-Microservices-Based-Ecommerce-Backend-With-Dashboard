@@ -40,6 +40,41 @@
 			<artifactId>spring-cloud-starter-gateway-mvc</artifactId>
 		</dependency>
 
+		<!-- Eureka Client: enables service discovery & lb:// routing -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jersey.contribs</groupId>
+					<artifactId>jersey-apache-client4</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Spring Cloud LoadBalancer (required for lb:// URIs in MVC Gateway) -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
+		</dependency>
+
+		<!-- Redis for rate limiting -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- Bucket4j core for token-bucket rate limiting -->
+		<dependency>
+			<groupId>com.bucket4j</groupId>
+			<artifactId>bucket4j-core</artifactId>
+			<version>8.10.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

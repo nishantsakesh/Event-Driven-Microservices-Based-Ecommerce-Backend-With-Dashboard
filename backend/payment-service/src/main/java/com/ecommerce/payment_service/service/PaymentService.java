@@ -9,6 +9,8 @@ import com.ecommerce.payment_service.entity.Payment;
 import com.ecommerce.payment_service.messaging.EventPublisher;
 import com.ecommerce.payment_service.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,28 +22,31 @@ import java.util.Random;
 @Transactional
 public class PaymentService {
 
+    private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
+
     private final PaymentRepository paymentRepository;
     private final EventPublisher eventPublisher;
     private final Random random = new Random();
 
     public void processPayment(OrderCreatedEvent event) {
+        log.info("Processing payment for Order #{} (UserId: {}, Amount: {})", 
+                event.getOrderId(), event.getUserId(), event.getTotalAmount());
 
-        System.out.println("=================================");
-        System.out.println("PROCESSING PAYMENT");
-        System.out.println("Order Id : " + event.getOrderId());
-        System.out.println("User Id  : " + event.getUserId());
-        System.out.println("Amount   : " + event.getTotalAmount());
-        System.out.println("=================================");
+        // Idempotency check to prevent duplicate charges
+        if (paymentRepository.findByOrderId(event.getOrderId()).isPresent()) {
+            log.info("Payment already processed for Order #{} - skipping.", event.getOrderId());
+            return;
+        }
 
-        
+        // Simulated payment gateway: 10% simulated decline rate for saga testing
         boolean simulateFailure = random.nextInt(10) == 0;
-        
+
         if (simulateFailure) {
             Payment payment = Payment.builder()
                     .orderId(event.getOrderId())
                     .userId(event.getUserId())
                     .amount(event.getTotalAmount())
-                    .paymentMethod("UPI")
+                    .paymentMethod(event.getPaymentMethod() != null ? event.getPaymentMethod() : "CARD")
                     .status(com.ecommerce.payment_service.entity.PaymentStatus.FAILED)
                     .transactionId(generateTransactionId())
                     .createdAt(LocalDateTime.now())
@@ -50,33 +55,28 @@ public class PaymentService {
 
             paymentRepository.save(payment);
 
-            PaymentFailedEvent failedEvent =
-                    PaymentFailedEvent.builder()
-                            .orderId(event.getOrderId())
-                            .userId(event.getUserId())
-                            .amount(event.getTotalAmount())
-                            .paymentMethod("UPI")
-                            .reason("Payment declined - insufficient funds (simulated)")
-                            .paymentStatus(PaymentStatus.FAILED)
-                            .failedAt(LocalDateTime.now())
-                            .items(event.getItems())
-                            .build();
+            PaymentFailedEvent failedEvent = PaymentFailedEvent.builder()
+                    .orderId(event.getOrderId())
+                    .userId(event.getUserId())
+                    .amount(event.getTotalAmount())
+                    .paymentMethod(event.getPaymentMethod() != null ? event.getPaymentMethod() : "CARD")
+                    .reason("Payment declined - insufficient funds (simulated)")
+                    .paymentStatus(PaymentStatus.FAILED)
+                    .failedAt(LocalDateTime.now())
+                    .items(event.getItems())
+                    .build();
 
             eventPublisher.publishPaymentFailed(failedEvent);
-
-            System.out.println("=================================");
-            System.out.println("PAYMENT FAILED (SIMULATED 10%)");
-            System.out.println("=================================");
+            log.warn("Payment failed for Order #{} (Simulated decline)", event.getOrderId());
             return;
         }
 
         try {
-
             Payment payment = Payment.builder()
                     .orderId(event.getOrderId())
                     .userId(event.getUserId())
                     .amount(event.getTotalAmount())
-                    .paymentMethod("UPI")
+                    .paymentMethod(event.getPaymentMethod() != null ? event.getPaymentMethod() : "CARD")
                     .status(com.ecommerce.payment_service.entity.PaymentStatus.SUCCESS)
                     .transactionId(generateTransactionId())
                     .createdAt(LocalDateTime.now())
@@ -85,73 +85,56 @@ public class PaymentService {
 
             payment = paymentRepository.save(payment);
 
-            PaymentSuccessEvent successEvent =
-                    PaymentSuccessEvent.builder()
-                            .paymentId(payment.getId())
-                            .orderId(payment.getOrderId())
-                            .userId(payment.getUserId())
-                            .amount(payment.getAmount())
-                            .transactionId(payment.getTransactionId())
-                            .paymentMethod(payment.getPaymentMethod())
-                            .paymentStatus(PaymentStatus.SUCCESS)
-                            .paidAt(LocalDateTime.now())
-                            .items(event.getItems())
-                            .build();
+            PaymentSuccessEvent successEvent = PaymentSuccessEvent.builder()
+                    .paymentId(payment.getId())
+                    .orderId(payment.getOrderId())
+                    .userId(payment.getUserId())
+                    .amount(payment.getAmount())
+                    .transactionId(payment.getTransactionId())
+                    .paymentMethod(payment.getPaymentMethod())
+                    .paymentStatus(PaymentStatus.SUCCESS)
+                    .paidAt(LocalDateTime.now())
+                    .items(event.getItems())
+                    .build();
 
             eventPublisher.publishPaymentSuccess(successEvent);
+            log.info("Payment succeeded for Order #{} (PaymentId: {})", event.getOrderId(), payment.getId());
 
-            System.out.println("=================================");
-            System.out.println("PAYMENT SUCCESS");
-            System.out.println(successEvent);
-            System.out.println("=================================");
-
-        }
-        catch (Exception ex) {
-
-            PaymentFailedEvent failedEvent =
-                    PaymentFailedEvent.builder()
-                            .orderId(event.getOrderId())
-                            .userId(event.getUserId())
-                            .amount(event.getTotalAmount())
-                            .paymentMethod("UPI")
-                            .reason(ex.getMessage())
-                            .paymentStatus(PaymentStatus.FAILED)
-                            .failedAt(LocalDateTime.now())
-                            .items(event.getItems())
-                            .build();
+        } catch (Exception ex) {
+            PaymentFailedEvent failedEvent = PaymentFailedEvent.builder()
+                    .orderId(event.getOrderId())
+                    .userId(event.getUserId())
+                    .amount(event.getTotalAmount())
+                    .paymentMethod(event.getPaymentMethod() != null ? event.getPaymentMethod() : "CARD")
+                    .reason(ex.getMessage())
+                    .paymentStatus(PaymentStatus.FAILED)
+                    .failedAt(LocalDateTime.now())
+                    .items(event.getItems())
+                    .build();
 
             eventPublisher.publishPaymentFailed(failedEvent);
-
-            System.out.println("=================================");
-            System.out.println("PAYMENT FAILED");
-            System.out.println(failedEvent);
-            System.out.println("=================================");
+            log.error("Payment processing error for Order #{}: {}", event.getOrderId(), ex.getMessage());
         }
-
     }
 
+    /**
+     * Compensating transaction: refunds payment if inventory reservation fails downstream.
+     */
     public void handleInventoryFailed(InventoryFailedEvent event) {
-        System.out.println("=================================");
-        System.out.println("HANDLING INVENTORY FAILED FOR ORDER: " + event.getOrderId());
-        System.out.println("=================================");
+        log.info("Handling inventory failure compensation for Order #{}", event.getOrderId());
 
-        Payment payment = paymentRepository.findByOrderId(event.getOrderId())
-                .orElse(null);
-
+        Payment payment = paymentRepository.findByOrderId(event.getOrderId()).orElse(null);
         if (payment != null) {
             payment.setStatus(com.ecommerce.payment_service.entity.PaymentStatus.REFUNDED);
             payment.setUpdatedAt(LocalDateTime.now());
             paymentRepository.save(payment);
-            System.out.println("Payment status updated to REFUNDED for orderId: " + event.getOrderId());
+            log.info("Payment refunded for Order #{}", event.getOrderId());
         } else {
-            System.out.println("Payment record not found for orderId: " + event.getOrderId());
+            log.warn("No payment record found to refund for Order #{}", event.getOrderId());
         }
     }
 
     private String generateTransactionId() {
-
         return "TXN-" + System.currentTimeMillis();
-
     }
-
 }

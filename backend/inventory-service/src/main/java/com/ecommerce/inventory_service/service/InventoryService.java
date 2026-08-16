@@ -5,108 +5,74 @@ import com.ecommerce.common.events.InventoryReservedEvent;
 import com.ecommerce.common.events.OrderItemEvent;
 import com.ecommerce.common.events.PaymentSuccessEvent;
 import com.ecommerce.inventory_service.entity.Inventory;
-import com.ecommerce.inventory_service.entity.InventoryStatus;
 import com.ecommerce.inventory_service.messaging.EventPublisher;
 import com.ecommerce.inventory_service.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class InventoryService {
 
+    private static final Logger log = LoggerFactory.getLogger(InventoryService.class);
+
     private final InventoryRepository inventoryRepository;
-
-    private final RestTemplate restTemplate;
-
     private final EventPublisher eventPublisher;
 
-    @Value("${product.service.url}")
-    private String productServiceUrl;
-
-    public void reserveInventory(
-            PaymentSuccessEvent event) {
+    public void reserveInventory(PaymentSuccessEvent event) {
+        log.info("Attempting to reserve inventory for Order #{}", event.getOrderId());
 
         try {
-
+            // First pass: verify stock availability for all items
             for (OrderItemEvent item : event.getItems()) {
+                Inventory inventory = inventoryRepository
+                        .findByProductId(item.getProductId())
+                        .orElseThrow(() -> new RuntimeException("Product not found in inventory: " + item.getProductId()));
 
-                String url =
-                        productServiceUrl +
-                                "/api/products/"
-                                + item.getProductId()
-                                + "/reduce-stock/"
-                                + item.getQuantity();
-
-                restTemplate.put(
-                        url,
-                        null
-                );
-
-                Inventory inventory =
-                        Inventory.builder()
-                                .orderId(event.getOrderId())
-                                .userId(event.getUserId())
-                                .productId(item.getProductId())
-                                .quantity(item.getQuantity())
-                                .status(InventoryStatus.RESERVED)
-                                .processedAt(LocalDateTime.now())
-                                .build();
-
-                inventoryRepository.save(inventory);
-
+                if (inventory.getQuantity() < item.getQuantity()) {
+                    throw new RuntimeException("Insufficient stock for Product ID: " + item.getProductId()
+                            + " (Requested: " + item.getQuantity() + ", Available: " + inventory.getQuantity() + ")");
+                }
             }
 
-            InventoryReservedEvent reservedEvent =
-                    InventoryReservedEvent.builder()
-                            .orderId(event.getOrderId())
-                            .userId(event.getUserId())
-                            .items(event.getItems())
-                            .reservedAt(LocalDateTime.now())
-                            .build();
+            // Second pass: deduct stock
+            for (OrderItemEvent item : event.getItems()) {
+                Inventory inventory = inventoryRepository
+                        .findByProductId(item.getProductId())
+                        .get();
 
-            eventPublisher.publishInventoryReservedEvent(
-                    reservedEvent
-            );
+                inventory.setQuantity(inventory.getQuantity() - item.getQuantity());
+                inventoryRepository.save(inventory);
+            }
 
-            System.out.println("--------------------------------");
-            System.out.println("INVENTORY RESERVED");
-            System.out.println("--------------------------------");
+            InventoryReservedEvent reservedEvent = InventoryReservedEvent.builder()
+                    .orderId(event.getOrderId())
+                    .userId(event.getUserId())
+                    .items(event.getItems())
+                    .reservedAt(LocalDateTime.now())
+                    .build();
 
+            eventPublisher.publishInventoryReservedEvent(reservedEvent);
+            log.info("Inventory successfully reserved for Order #{}", event.getOrderId());
+
+        } catch (Exception ex) {
+            log.error("Inventory reservation failed for Order #{}: {}", event.getOrderId(), ex.getMessage());
+
+            InventoryFailedEvent failedEvent = InventoryFailedEvent.builder()
+                    .orderId(event.getOrderId())
+                    .userId(event.getUserId())
+                    .items(event.getItems())
+                    .reason(ex.getMessage() != null ? ex.getMessage() : ex.toString())
+                    .failedAt(LocalDateTime.now())
+                    .build();
+
+            eventPublisher.publishInventoryFailedEvent(failedEvent);
         }
-
-        catch (Exception ex) {
-
-            ex.printStackTrace();
-
-            InventoryFailedEvent failedEvent =
-                    InventoryFailedEvent.builder()
-                            .orderId(event.getOrderId())
-                            .userId(event.getUserId())
-                            .items(event.getItems())
-                            .reason(
-                                    ex.getMessage() != null
-                                            ? ex.getMessage()
-                                            : ex.toString()
-                            )
-                            .failedAt(LocalDateTime.now())
-                            .build();
-
-            eventPublisher.publishInventoryFailedEvent(
-                    failedEvent
-            );
-
-            System.out.println("--------------------------------");
-            System.out.println("INVENTORY FAILED");
-            System.out.println(ex.getMessage());
-            System.out.println("--------------------------------");
-
-        }
-
     }
-
 }

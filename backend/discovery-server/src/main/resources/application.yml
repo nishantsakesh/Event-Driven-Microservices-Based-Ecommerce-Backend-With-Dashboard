@@ -1,0 +1,20 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: discovery-server
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false   # This server does not register itself
+    fetch-registry: false         # This server does not fetch from itself
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    wait-time-in-ms-when-sync-empty: 0   # Faster startup in development

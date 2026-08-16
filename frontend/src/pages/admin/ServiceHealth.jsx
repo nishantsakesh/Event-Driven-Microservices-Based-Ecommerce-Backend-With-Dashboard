@@ -4,13 +4,13 @@ import { Activity, RefreshCw, Server } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SERVICES = [
-  { id: 'gateway', name: 'API Gateway', endpoint: '/health' },
-  { id: 'auth', name: 'Auth Service', endpoint: '/api/auth/health' },
-  { id: 'product', name: 'Product Service', endpoint: '/api/products/health' },
-  { id: 'order', name: 'Order Service', endpoint: '/api/orders/health' },
-  { id: 'payment', name: 'Payment Service', endpoint: '/api/payments/health' },
-  { id: 'inventory', name: 'Inventory Service', endpoint: '/api/inventory/health' },
-  { id: 'notification', name: 'Notification Service', endpoint: '/api/notifications/health' },
+  { id: 'gateway', name: 'API Gateway', endpoint: '/api/products' },
+  { id: 'auth', name: 'Auth Service', endpoint: '/api/auth/users' },
+  { id: 'product', name: 'Product Service', endpoint: '/api/products' },
+  { id: 'order', name: 'Order Service', endpoint: '/api/orders' },
+  { id: 'payment', name: 'Payment Service', endpoint: '/api/payments' },
+  { id: 'inventory', name: 'Inventory Service', endpoint: '/api/inventory' },
+  { id: 'notification', name: 'Notification Service', endpoint: '/api/notifications' },
 ];
 
 export default function ServiceHealth() {

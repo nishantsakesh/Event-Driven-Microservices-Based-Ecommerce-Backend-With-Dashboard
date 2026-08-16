@@ -9,6 +9,7 @@ export const QUERY_KEYS = {
   PAYMENT: ["payment"],
   INVENTORY: ["inventory"],
   NOTIFICATIONS: ["notifications"],
+  SUBSCRIBERS: ["subscribers"],
   USERS: ["users"],
   DASHBOARD: ["dashboard"],
 };

@@ -5,6 +5,8 @@ import com.ecommerce.common.events.InventoryFailedEvent;
 import com.ecommerce.common.events.OrderCreatedEvent;
 import com.ecommerce.payment_service.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -14,30 +16,18 @@ import org.springframework.stereotype.Component;
 @RabbitListener(queues = RabbitMQConstants.PAYMENT_QUEUE)
 public class PaymentListener {
 
+    private static final Logger log = LoggerFactory.getLogger(PaymentListener.class);
     private final PaymentService paymentService;
 
     @RabbitHandler
     public void consumeOrderCreatedEvent(OrderCreatedEvent event) {
-
-        System.out.println("=================================");
-        System.out.println("ORDER RECEIVED");
-        System.out.println(event);
-        System.out.println("=================================");
-
+        log.info("Received OrderCreatedEvent for Order #{}", event.getOrderId());
         paymentService.processPayment(event);
-
     }
 
     @RabbitHandler
     public void consumeInventoryFailedEvent(InventoryFailedEvent event) {
-
-        System.out.println("=================================");
-        System.out.println("INVENTORY FAILED EVENT RECEIVED");
-        System.out.println(event);
-        System.out.println("=================================");
-
+        log.info("Received InventoryFailedEvent for Order #{}", event.getOrderId());
         paymentService.handleInventoryFailed(event);
-
     }
-
 }

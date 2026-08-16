@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 export default function MyOrders() {
   const user = useAuthStore(state => state.user);
-  const { data: orders, isLoading } = useUserOrders(user?.id, { enabled: !!user });
+  const { data: orders = [], isLoading } = useUserOrders(user?.id);
   const cancelOrder = useCancelOrder();
   
   const [expandedOrders, setExpandedOrders] = useState({});
@@ -57,12 +57,10 @@ export default function MyOrders() {
         </div>
 
         {isLoading ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-20 bg-[#0A0A0A] border border-[#1F1F1F] animate-pulse" />
-            ))}
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
           </div>
-        ) : orders?.length === 0 ? (
+        ) : (!orders || orders.length === 0) ? (
           <div className="text-center py-20 bg-[#0A0A0A] border border-[#1F1F1F]">
             <Package className="w-12 h-12 text-[#1F1F1F] mx-auto mb-6" />
             <h2 className="text-xl font-black tracking-tighter uppercase text-white mb-4">No orders yet</h2>
@@ -73,7 +71,7 @@ export default function MyOrders() {
           </div>
         ) : (
           <div className="space-y-6">
-            {orders?.map(order => {
+            {orders.map(order => {
               const status = getStatusConfig(order.status);
               const StatusIcon = status.icon;
               const isExpanded = expandedOrders[order.id];
@@ -129,8 +127,10 @@ export default function MyOrders() {
                                 <div key={idx} className="flex justify-between items-center bg-[#0A0A0A] border border-[#1F1F1F] p-3">
                                   <div className="flex items-center gap-4">
                                     <div className="w-10 h-10 bg-[#050505] border border-[#1F1F1F] flex items-center justify-center p-1">
-                                      {item.product?.imageUrl ? (
-                                        <img src={item.product.imageUrl} alt={item.product.name} className="w-full h-full object-contain" />
+                                      {item.productImageUrl ? (
+                                        <img src={item.productImageUrl} alt={item.productName} className="w-full h-full object-contain" />
+                                      ) : item.product?.imageUrl ? (
+                                        <img src={item.product.imageUrl} alt={item.product?.name || item.productName} className="w-full h-full object-contain" />
                                       ) : (
                                         <Package className="w-4 h-4 text-[#1F1F1F]" />
                                       )}

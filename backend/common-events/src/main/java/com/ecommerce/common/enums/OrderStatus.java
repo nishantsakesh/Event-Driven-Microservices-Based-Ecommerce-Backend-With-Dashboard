@@ -2,6 +2,8 @@ package com.ecommerce.common.enums;
 
 public enum OrderStatus {
 
+    CREATED,
+
     PENDING,
 
     PAYMENT_PENDING,
@@ -12,7 +14,19 @@ public enum OrderStatus {
 
     INVENTORY_RESERVED,
 
+    ORDER_CONFIRMED,
+
+    CONFIRMED,
+
     PLACED,
 
-    CANCELLED
+    PAID,
+
+    SHIPPED,
+
+    DELIVERED,
+
+    CANCELLED,
+
+    REFUNDED
 }

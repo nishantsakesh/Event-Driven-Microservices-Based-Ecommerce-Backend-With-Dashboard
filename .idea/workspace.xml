@@ -5,61 +5,65 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2c21fa02-2830-4655-9510-ca81234e56b5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BACKEND/common-events/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/api-gateway/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/api-gateway/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/auth-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/auth-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/InventoryServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/InventoryServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/config/CorsConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/controller/InventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/controller/InventoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/dto/InventoryRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/dto/InventoryResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/dto/InventoryResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/dto/StockReserveRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/dto/StockUpdateRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/entity/Inventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/entity/Inventory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/init/InventoryInitializer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/repository/InventoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/repository/InventoryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/service/InventoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/java/com/ecommerce/inventory_service/service/InventoryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/inventory-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/inventory-service/src/test/java/com/ecommerce/inventory_service/InventoryServiceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/notification-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/notification-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/notification-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/notification-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/dto/OrderResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/dto/OrderResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/entity/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/entity/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/entity/OrderStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/repository/OrderItemRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/src/main/java/com/ecommerce/order_service/service/OrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/order-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/order-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/config/CorsConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/config/RestTemplateConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/controller/PaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/controller/PaymentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/dto/OrderSummary.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/dto/PaymentRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/entity/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/entity/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/repository/PaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/repository/PaymentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/java/com/ecommerce/payment_service/service/PaymentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/payment-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/payment-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/repository/ProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/java/com/ecommerce/product_service/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BACKEND/product-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BACKEND/product-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/dto/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/dto/RegisterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/src/main/java/com/ecommerce/auth_service/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/auth-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/auth-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/common-events/src/main/java/com/ecommerce/common/enums/OrderStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/common-events/src/main/java/com/ecommerce/common/enums/OrderStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/common-events/src/main/java/com/ecommerce/common/events/OrderCreatedEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/common-events/src/main/java/com/ecommerce/common/events/OrderCreatedEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/inventory-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/inventory-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/inventory-service/src/main/java/com/ecommerce/inventory_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/inventory-service/src/main/java/com/ecommerce/inventory_service/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/inventory-service/src/main/java/com/ecommerce/inventory_service/service/InventoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/inventory-service/src/main/java/com/ecommerce/inventory_service/service/InventoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/inventory-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/inventory-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/config/RestTemplateConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/config/RestTemplateConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/controller/OrderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/dto/OrderItemResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/dto/OrderItemResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/dto/OrderRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/dto/OrderRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/dto/OrderResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/dto/OrderResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/entity/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/entity/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/entity/OrderItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/entity/OrderItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/repository/OrderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/repository/OrderRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/java/com/ecommerce/order_service/service/OrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/order-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/order-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/payment-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/payment-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/payment-service/src/main/java/com/ecommerce/payment_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/payment-service/src/main/java/com/ecommerce/payment_service/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/payment-service/src/main/java/com/ecommerce/payment_service/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/payment-service/src/main/java/com/ecommerce/payment_service/service/PaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/payment-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/payment-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/ProductServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/ProductServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/config/DatabaseSeeder.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/config/DatabaseSeeder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/src/main/java/com/ecommerce/product_service/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/product-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/product-service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/axios.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/axios.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/api/services.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/api/services.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/layout/AdminSidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/layout/AdminSidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/layout/Footer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/layout/Footer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/constants/queryKeys.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/constants/queryKeys.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/hooks/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/hooks/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/lib/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/lib/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/admin/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/admin/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/admin/Notifications.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/admin/Notifications.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/admin/Orders.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/admin/Orders.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/admin/Products.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/admin/Products.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/admin/ServiceHealth.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/admin/ServiceHealth.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/admin/Settings.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/admin/Settings.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/admin/Users.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/admin/Users.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/storefront/MyOrders.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/storefront/MyOrders.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,5 +164,10 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/frontend/src/main.jsx" />
+      </list>
+    </option>
   </component>
 </project>

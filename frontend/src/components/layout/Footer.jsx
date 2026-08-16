@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Headphones, Globe, Share2, MessageCircle, Mail } from 'lucide-react';
+import { Headphones, Globe, Share2, MessageCircle, Mail, CheckCircle2, Loader2 } from 'lucide-react';
+import { useSubscribeNewsletter } from '@/hooks';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const subscribeMutation = useSubscribeNewsletter();
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) return;
+
+    subscribeMutation.mutate(email, {
+      onSuccess: () => {
+        setIsSuccess(true);
+        setEmail('');
+        setTimeout(() => setIsSuccess(false), 5000);
+      },
+    });
+  };
+
   return (
     <footer className="bg-premium-void border-t border-premium-slate/15 pt-20 pb-10 font-sans">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,7 +30,8 @@ export default function Footer() {
             <h3 className="text-white font-bold tracking-widest text-xs uppercase mb-6">Products</h3>
             <ul className="space-y-4">
               <li><Link to="/products?category=HEADPHONE" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Headphones</Link></li>
-              <li><Link to="/products?category=EARPHONE" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Earbuds</Link></li>
+              <li><Link to="/products?category=EARPHONE" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Earphones</Link></li>
+              <li><Link to="/products?category=EARBUDS" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Earbuds</Link></li>
               <li><Link to="/products?category=SPEAKER" className="text-premium-cement hover:text-premium-wheat text-sm transition-colors">Speakers</Link></li>
             </ul>
           </div>
@@ -43,20 +62,35 @@ export default function Footer() {
             <p className="text-premium-cement text-sm leading-relaxed mb-6">
               Join the Inner Circle. Get exclusive access to limited-run audio drops.
             </p>
-            <form className="flex" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="footer-newsletter-input flex-1 rounded-l-[4px]"
-                required
-              />
-              <button 
-                type="submit" 
-                className="bg-premium-gold text-premium-void px-6 py-3 font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-colors rounded-r-[4px]"
-              >
-                Join
-              </button>
-            </form>
+            {isSuccess ? (
+              <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded text-emerald-400 text-sm">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>You're in the Inner Circle! Check your inbox.</span>
+              </div>
+            ) : (
+              <form className="flex" onSubmit={handleSubscribe}>
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email" 
+                  className="footer-newsletter-input flex-1 rounded-l-[4px]"
+                  disabled={subscribeMutation.isPending}
+                  required
+                />
+                <button 
+                  type="submit" 
+                  disabled={subscribeMutation.isPending}
+                  className="bg-premium-gold text-premium-void px-6 py-3 font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-colors rounded-r-[4px] disabled:opacity-50 flex items-center gap-1.5"
+                >
+                  {subscribeMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Join'
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
         
@@ -69,9 +103,6 @@ export default function Footer() {
           <p className="text-premium-cement text-xs font-mono">
             &copy; {new Date().getFullYear()} AUDIOHUB. ALL RIGHTS RESERVED.
           </p>
-          <div className="flex gap-4">
-            {/* Icons removed to de-clutter the baseline */}
-          </div>
         </div>
       </div>
     </footer>

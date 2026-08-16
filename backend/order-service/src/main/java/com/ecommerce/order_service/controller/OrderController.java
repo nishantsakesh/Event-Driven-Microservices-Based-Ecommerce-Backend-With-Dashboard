@@ -64,5 +64,22 @@ public class OrderController {
         );
 
     }
-    
+
+    @PatchMapping("/{id}/mark-cod-paid")
+    public ResponseEntity<String> markCodAsPaid(
+            @PathVariable Long id) {
+
+        orderService.markCodAsPaid(id);
+        return ResponseEntity.ok("Order marked as PAID successfully");
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> updateOrderStatus(
+            @PathVariable Long id,
+            @RequestParam com.ecommerce.common.enums.OrderStatus status) {
+
+        orderService.updateOrderStatus(id, status);
+        return ResponseEntity.ok("Order status updated successfully");
+    }
+
 }

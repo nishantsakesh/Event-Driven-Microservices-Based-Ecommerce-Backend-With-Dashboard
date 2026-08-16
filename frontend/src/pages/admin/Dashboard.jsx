@@ -23,7 +23,7 @@ export default function Dashboard() {
   const stats = data || { totalOrders: 0, totalRevenue: 0, totalProducts: 0, totalUsers: 0 };
   const revenueData = data?.revenueByDate || [];
   const orderStatusData = data?.orderStatusDistribution || [];
-  const recentOrders = data?.orders?.slice(0, 5) || [];
+  const recentOrders = data?.recentOrders || [];
 
   return (
     <div className="space-y-6">
@@ -158,6 +158,31 @@ export default function Dashboard() {
                               <span className="text-gray-900 dark:text-white">{formatDate(order.createdAt)}</span>
                             </div>
                           </div>
+                          {order.items && order.items.length > 0 && (
+                            <div className="mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 pl-4 sm:pl-10">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Order Items</h4>
+                              <div className="space-y-2">
+                                {order.items.map((item, idx) => (
+                                  <div key={idx} className="flex items-center justify-between bg-white dark:bg-gray-900 p-2 rounded border border-gray-100 dark:border-gray-700 max-w-2xl">
+                                    <div className="flex items-center gap-3">
+                                      {item.imageUrl ? (
+                                        <img src={item.imageUrl} alt={item.productName} className="w-10 h-10 object-cover rounded" />
+                                      ) : (
+                                        <div className="w-10 h-10 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center text-xs text-gray-500">Img</div>
+                                      )}
+                                      <div>
+                                        <p className="text-sm font-medium text-gray-900 dark:text-white">{item.productName}</p>
+                                        <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                                      </div>
+                                    </div>
+                                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                      {formatPrice((item.unitPrice || item.price || 0) * (item.quantity || 1))}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </td>
                       </motion.tr>
                     )}
@@ -166,7 +191,7 @@ export default function Dashboard() {
               ))}
               {recentOrders.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-gray-500">No recent orders found</td>
+                  <td colSpan="6" className="px-6 py-8 text-center text-gray-500">No recent orders found</td>
                 </tr>
               )}
             </tbody>

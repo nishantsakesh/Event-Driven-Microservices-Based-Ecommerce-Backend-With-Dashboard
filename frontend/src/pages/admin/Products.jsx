@@ -37,10 +37,14 @@ export default function Products() {
     setHighlights(product?.highlights || []);
     setWhatsInTheBox(product?.whatsInTheBox || []);
     setSpecs(
-      product?.technicalSpecifications
-        ? product.technicalSpecifications
+      Array.isArray(product?.technicalSpecifications)
+        ? product.technicalSpecifications.map(s => {
+            if (s.key !== undefined && s.value !== undefined) return { key: String(s.key), value: String(s.value) };
+            const entry = Object.entries(s)[0];
+            return entry ? { key: String(entry[0]), value: String(entry[1]) } : { key: '', value: '' };
+          })
         : (product?.specifications 
-            ? Object.entries(product.specifications).map(([key, value]) => ({ key, value }))
+            ? Object.entries(product.specifications).map(([key, value]) => ({ key: String(key), value: String(value) }))
             : [])
     );
     setIsModalOpen(true);

@@ -60,6 +60,9 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
+
         return new LoginResponse(
                 user.getId(),
                 user.getName(),
@@ -84,6 +87,10 @@ public class AuthService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public long getUserCount() {
+        return userRepository.count();
     }
 
     public User getUserById(Long id) {

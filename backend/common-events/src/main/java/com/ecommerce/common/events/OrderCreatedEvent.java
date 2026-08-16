@@ -28,4 +28,6 @@ public class OrderCreatedEvent {
 
     private List<OrderItemEvent> items;
 
+    private String paymentMethod;
+
 }

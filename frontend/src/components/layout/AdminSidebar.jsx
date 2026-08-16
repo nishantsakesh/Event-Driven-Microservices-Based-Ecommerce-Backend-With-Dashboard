@@ -36,8 +36,8 @@ export default function AdminSidebar({ isOpen, setIsOpen }) {
       )}>
         <div className="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
           <Link to="/admin/dashboard" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-cyan-500">
-              AUDIOHUB
+            <span className="text-xl font-black tracking-tight text-white dark:text-[#EFD6AC]">
+              AudioHub<span className="text-[#C44900]">.</span>
             </span>
             <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 text-xs font-semibold uppercase tracking-wider">
               Admin

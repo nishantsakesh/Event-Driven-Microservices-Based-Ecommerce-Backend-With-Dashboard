@@ -14,9 +14,18 @@ export function formatPrice(price) {
   }).format(num);
 }
 
-export function formatDate(dateString) {
-  if (!dateString) return "—";
-  return new Date(dateString).toLocaleDateString("en-US", {
+export function formatDate(dateInput) {
+  if (!dateInput) return "—";
+  let date;
+  if (Array.isArray(dateInput)) {
+    const [year, month, day, hour = 0, minute = 0, second = 0] = dateInput;
+    date = new Date(year, month - 1, day, hour, minute, second);
+  } else {
+    date = new Date(dateInput);
+  }
+  if (isNaN(date.getTime())) return "Invalid Date";
+  
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",

@@ -1,140 +1,145 @@
 package com.ecommerce.order_service.service;
 
-import com.ecommerce.common.constants.RabbitMQConstants;
 import com.ecommerce.common.enums.OrderStatus;
 import com.ecommerce.common.events.OrderCreatedEvent;
-import com.ecommerce.order_service.dto.OrderItemResponse;
-import com.ecommerce.order_service.dto.OrderRequest;
-import com.ecommerce.order_service.dto.OrderResponse;
-import com.ecommerce.common.dto.ProductResponse;
+import com.ecommerce.common.events.OrderItemEvent;
+import com.ecommerce.order_service.dto.*;
 import com.ecommerce.order_service.entity.Order;
 import com.ecommerce.order_service.entity.OrderItem;
-import com.ecommerce.order_service.messaging.EventPublisher;
 import com.ecommerce.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import com.ecommerce.common.events.OrderItemEvent;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final RestTemplate restTemplate;
-    private final EventPublisher eventPublisher;
+    private final RabbitTemplate rabbitTemplate;
 
-    @Value("${product.service.url}")
+    @Value("${product.service.url:http://localhost:8082}")
     private String productServiceUrl;
 
     public OrderResponse createOrder(OrderRequest request) {
 
-        LocalDateTime now = LocalDateTime.now();
-
-        Order order = Order.builder()
-                .userId(request.getUserId())
-                .status(OrderStatus.PAYMENT_PENDING)
-                .createdAt(now)
-                .updatedAt(now)
-                .build();
-
-        BigDecimal totalAmount = BigDecimal.ZERO;
-
-        java.util.Map<Long, Integer> productQuantities = new java.util.HashMap<>();
-        for (var itemReq : request.getItems()) {
-            productQuantities.merge(itemReq.getProductId(), itemReq.getQuantity(), Integer::sum);
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Order must contain at least one item");
         }
 
-        List<OrderItem> items = productQuantities.entrySet().stream()
+        Map<Long, Integer> productQuantities = new HashMap<>();
+        for (OrderItemRequest itemReq : request.getItems()) {
+            productQuantities.put(
+                    itemReq.getProductId(),
+                    productQuantities.getOrDefault(itemReq.getProductId(), 0) + itemReq.getQuantity()
+            );
+        }
+
+        List<OrderItem> mergedItems = productQuantities.entrySet().stream()
                 .map(entry -> {
                     ProductResponse product = getProduct(entry.getKey());
                     return OrderItem.builder()
-                            .order(order)
                             .productId(product.getId())
                             .productName(product.getName())
                             .quantity(entry.getValue())
                             .unitPrice(product.getPrice())
+                            .imageUrl(product.getImageUrl())
                             .build();
                 })
                 .collect(Collectors.toList());
 
-        for (OrderItem item : items) {
+        BigDecimal totalAmount = mergedItems.stream()
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            totalAmount = totalAmount.add(
+        Order order = Order.builder()
+                .userId(request.getUserId())
+                .totalAmount(totalAmount)
+                .status(OrderStatus.PAYMENT_PENDING)
+                .createdAt(LocalDateTime.now())
+                .paymentMethod(request.getPaymentMethod())
+                .build();
 
-                    item.getUnitPrice().multiply(
-                            BigDecimal.valueOf(item.getQuantity())
-                    )
-
-            );
-
+        for (OrderItem item : mergedItems) {
+            order.getItems().add(item);
+            item.setOrder(order);
         }
 
-        order.setItems(items);
-        order.setTotalAmount(totalAmount);
+        order = orderRepository.save(order);
 
-        orderRepository.save(order);
+        OrderCreatedEvent event = OrderCreatedEvent.builder()
+                .orderId(order.getId())
+                .userId(order.getUserId())
+                .totalAmount(order.getTotalAmount())
+                .orderStatus(order.getStatus())
+                .paymentMethod(order.getPaymentMethod())
+                .createdAt(order.getCreatedAt())
+                .items(order.getItems().stream()
+                        .map(i -> new OrderItemEvent(
+                                i.getProductId(),
+                                i.getProductName(),
+                                i.getQuantity(),
+                                i.getUnitPrice()
+                        )).collect(Collectors.toList()))
+                .build();
 
-        publishOrderCreated(order);
+        rabbitTemplate.convertAndSend(
+                "ecommerce.exchange",
+                "order.created",
+                event
+        );
 
         return toResponse(order);
-
     }
 
     public List<OrderResponse> getAllOrders() {
-
-        return orderRepository
-                .findAllByOrderByCreatedAtDesc()
-                .stream()
+        return orderRepository.findAll().stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
-
-    }
-
-    public List<OrderResponse> getOrdersByUser(Long userId) {
-
-        return orderRepository
-                .findByUserIdOrderByCreatedAtDesc(userId)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-
     }
 
     public OrderResponse getOrder(Long id) {
-
-        Order order = orderRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Order not found"));
-
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + id));
         return toResponse(order);
+    }
 
+    public List<OrderResponse> getOrdersByUser(Long userId) {
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     public OrderResponse cancelOrder(Long id) {
 
-        Order order = orderRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Order not found"));
-
-        if (order.getStatus() == OrderStatus.CANCELLED) {
-            return toResponse(order);
-        }
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + id));
 
         order.setStatus(OrderStatus.CANCELLED);
         order.setUpdatedAt(LocalDateTime.now());
 
         orderRepository.save(order);
+
+        for (OrderItem item : order.getItems()) {
+            try {
+                restTemplate.put(
+                        productServiceUrl + "/api/products/" + item.getProductId() + "/increment-stock/" + item.getQuantity(),
+                        null
+                );
+            } catch (Exception e) {
+                System.err.println("Failed to increment stock for product " + item.getProductId() + ": " + e.getMessage());
+            }
+        }
 
         return toResponse(order);
 
@@ -144,8 +149,7 @@ public class OrderService {
 
         Order order = orderRepository
                 .findById(orderId)
-                .orElseThrow(() ->
-                        new RuntimeException("Order not found: " + orderId));
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
 
         order.setStatus(newStatus);
         order.setUpdatedAt(LocalDateTime.now());
@@ -154,61 +158,31 @@ public class OrderService {
 
     }
 
+    public void markCodAsPaid(Long orderId) {
+        Order order = orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+
+        if ("CASH_ON_DELIVERY".equalsIgnoreCase(order.getPaymentMethod()) && order.getStatus() == OrderStatus.PAYMENT_PENDING) {
+            order.setStatus(OrderStatus.PAID);
+            order.setUpdatedAt(LocalDateTime.now());
+            orderRepository.save(order);
+        } else {
+            throw new RuntimeException("Order is not eligible to be marked as COD paid");
+        }
+    }
+
 
     private ProductResponse getProduct(Long productId) {
 
-        ProductResponse product =
-                restTemplate.getForObject(
-                        productServiceUrl +
-                                "/api/products/" +
-                                productId,
-                        ProductResponse.class
-                );
-
-        if (product == null) {
-
-            throw new RuntimeException(
-                    "Product not found : " + productId
+        try {
+            return restTemplate.getForObject(
+                    productServiceUrl + "/api/products/" + productId,
+                    ProductResponse.class
             );
-
+        } catch (Exception e) {
+            throw new RuntimeException("Product not found: " + productId);
         }
-
-        return product;
-
-    }
-
-    private void publishOrderCreated(Order order) {
-
-        OrderCreatedEvent event =
-                OrderCreatedEvent.builder()
-                        .orderId(order.getId())
-                        .userId(order.getUserId())
-                        .totalAmount(order.getTotalAmount())
-                        .orderStatus(order.getStatus())
-                        .createdAt(order.getCreatedAt())
-                        .items(
-
-                                order.getItems()
-                                        .stream()
-                                        .map(item ->
-
-                                                com.ecommerce.common.events.OrderItemEvent.builder()
-                                                        .productId(item.getProductId())
-                                                        .productName(item.getProductName())
-                                                        .quantity(item.getQuantity())
-                                                        .unitPrice(item.getUnitPrice())
-                                                        .build()
-
-                                        )
-                                        .toList()
-
-                        )
-                        .build();
-
-        eventPublisher.publish(
-                RabbitMQConstants.ORDER_CREATED,
-                event
-        );
 
     }
 
@@ -219,14 +193,11 @@ public class OrderService {
                 .userId(order.getUserId())
                 .totalAmount(order.getTotalAmount())
                 .status(order.getStatus())
-                .items(
-                        order.getItems()
-                                .stream()
-                                .map(this::toItemResponse)
-                                .collect(Collectors.toList())
-                )
                 .createdAt(order.getCreatedAt())
-                .updatedAt(order.getUpdatedAt())
+                .paymentMethod(order.getPaymentMethod())
+                .items(order.getItems().stream()
+                        .map(this::toItemResponse)
+                        .collect(Collectors.toList()))
                 .build();
 
     }
@@ -239,8 +210,8 @@ public class OrderService {
                 .productName(item.getProductName())
                 .quantity(item.getQuantity())
                 .unitPrice(item.getUnitPrice())
+                .imageUrl(item.getImageUrl())
                 .build();
 
     }
-
 }

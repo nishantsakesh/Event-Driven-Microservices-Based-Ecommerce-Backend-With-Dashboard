@@ -17,4 +17,6 @@ public class OrderRequest {
     @Valid
     private List<OrderItemRequest> items;
 
+    private String paymentMethod;
+
 }

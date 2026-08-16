@@ -26,6 +26,8 @@ export const orderService = {
   getByUser: (userId) => apiClient.get(`${API.ORDERS}/user/${userId}`),
   create: (data) => apiClient.post(API.ORDERS, data),
   cancel: (id) => apiClient.delete(`${API.ORDERS}/${id}`),
+  updateStatus: (id, status) => apiClient.patch(`${API.ORDERS}/${id}/status`, null, { params: { status } }),
+  markCodAsPaid: (id) => apiClient.patch(`${API.ORDERS}/${id}/mark-cod-paid`),
 };
 
 export const paymentService = {
@@ -46,82 +48,30 @@ export const notificationService = {
   getAll: () => apiClient.get(API.NOTIFICATIONS),
 };
 
+export const newsletterService = {
+  subscribe: (email) => apiClient.post(`${API.NOTIFICATIONS}/newsletter/subscribe`, { email }),
+  getSubscribers: () => apiClient.get(`${API.NOTIFICATIONS}/newsletter/subscribers`),
+  deleteSubscriber: (id) => apiClient.delete(`${API.NOTIFICATIONS}/newsletter/subscribers/${id}`),
+};
+
 export const userService = {
   getAll: () => apiClient.get(API.USERS),
   getById: (id) => apiClient.get(`${API.USERS}/${id}`),
 };
 
+/**
+ * PHASE 3.2 — Frontend Dashboard Service Refactor
+ * Previously: downloaded all raw orders/products/users/payments and aggregated in the browser.
+ * Now: calls a single backend endpoint (DashboardController in order-service) that returns
+ *      all pre-computed stats in one response. Much faster and correct.
+ */
 export const dashboardService = {
   getStats: async () => {
-    const [orders, products, payments, users] = await Promise.allSettled([
-      apiClient.get(API.ORDERS),
-      apiClient.get(API.PRODUCTS),
-      apiClient.get(API.PAYMENTS),
-      apiClient.get(API.USERS),
-    ]);
-    const ordersList = orders.status === "fulfilled" ? (orders.value.data || []) : [];
-    const productsList = products.status === "fulfilled" ? (products.value.data || []) : [];
-    const paymentsList = payments.status === "fulfilled" ? (payments.value.data || []) : [];
-    const usersList = users.status === "fulfilled" ? (users.value.data || []) : [];
-
-    // Calculate revenue by date
-    const revMap = {};
-    ordersList.forEach(o => {
-      if (o.status !== 'CANCELLED' && o.createdAt) {
-        const dateStr = String(o.createdAt).split('T')[0];
-        revMap[dateStr] = (revMap[dateStr] || 0) + (o.totalAmount || 0);
-      }
-    });
-    const revenueByDate = Object.entries(revMap).map(([date, revenue]) => ({ date, revenue }));
-
-    // Calculate order status distribution
-    const statusMap = {};
-    ordersList.forEach(o => {
-      const st = o.status || 'CREATED';
-      statusMap[st] = (statusMap[st] || 0) + 1;
-    });
-    const orderStatusDistribution = Object.entries(statusMap).map(([status, count]) => ({ status, count }));
-
-    // Calculate payment method distribution
-    const methodMap = {};
-    paymentsList.forEach(p => {
-      const method = p.paymentMethod ? p.paymentMethod.replace(/_/g, ' ') : 'Card';
-      methodMap[method] = (methodMap[method] || 0) + 1;
-    });
-    const paymentMethodData = Object.entries(methodMap).map(([name, value]) => ({ name, value }));
-
-    // Calculate top performing products
-    const prodSalesMap = {};
-    ordersList.forEach(o => {
-      if (o.status !== 'CANCELLED' && Array.isArray(o.items)) {
-        o.items.forEach(item => {
-          const pName = item.productName || `Product #${item.productId}`;
-          if (!prodSalesMap[pName]) {
-            prodSalesMap[pName] = { id: item.productId, name: pName, sales: 0, revenue: 0 };
-          }
-          prodSalesMap[pName].sales += item.quantity || 0;
-          prodSalesMap[pName].revenue += (item.unitPrice || item.price || 0) * (item.quantity || 0);
-        });
-      }
-    });
-    const topProducts = Object.values(prodSalesMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
-
-    return {
-      totalOrders: ordersList.length,
-      totalRevenue: ordersList.reduce((sum, o) => o.status !== 'CANCELLED' ? sum + (o.totalAmount || 0) : sum, 0),
-      totalProducts: productsList.length,
-      totalUsers: usersList.length,
-      orders: ordersList,
-      payments: paymentsList,
-      products: productsList,
-      users: usersList,
-      revenueByDate,
-      orderStatusDistribution,
-      paymentMethodData,
-      topProducts,
-    };
+    const { data } = await apiClient.get('/api/orders/dashboard/stats');
+    return data;
   },
 };
+
 
 export const healthService = {
   checkService: async (name, url) => {

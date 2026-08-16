@@ -93,7 +93,7 @@ export default function Users() {
                               </div>
                               <div>
                                 <span className="block text-gray-500 dark:text-gray-400 text-xs mb-1">Last Login</span>
-                                <span className="text-gray-900 dark:text-white">N/A</span>
+                                <span className="text-gray-900 dark:text-white">{user.lastLoginAt ? formatDate(user.lastLoginAt) : 'N/A'}</span>
                               </div>
                             </div>
                           </td>

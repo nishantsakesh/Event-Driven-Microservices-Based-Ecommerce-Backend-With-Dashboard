@@ -46,7 +46,6 @@ public class NotificationServiceImpl implements NotificationService {
         String recipientEmail = "customer@audiohub.com";
 
         try {
-            // Fetch user info from auth-service
             Map<?, ?> user = restTemplate.getForObject(authServiceUrl + "/api/auth/users/" + event.getUserId(), Map.class);
             if (user != null) {
                 if (user.get("name") != null) {
@@ -60,7 +59,6 @@ public class NotificationServiceImpl implements NotificationService {
             log.warn("Could not fetch user details from auth-service for userId {}: {}", event.getUserId(), e.getMessage());
         }
 
-        // Calculate total and build items summary
         BigDecimal totalAmount = BigDecimal.ZERO;
         StringBuilder itemsSummary = new StringBuilder();
         if (event.getItems() != null && !event.getItems().isEmpty()) {
@@ -95,7 +93,6 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notification);
         log.info("Successfully recorded INVOICE notification for order #{} to {} ({})", event.getOrderId(), recipientName, recipientEmail);
 
-        // Generate HTML Invoice Email and send
         String htmlInvoice = buildHtmlInvoice(event, recipientName, recipientEmail, totalAmount);
         emailService.sendHtmlEmail(recipientEmail, invoiceSubject, htmlInvoice);
     }

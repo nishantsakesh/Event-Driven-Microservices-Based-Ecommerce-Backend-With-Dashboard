@@ -1,5 +1,6 @@
 package com.ecommerce.order_service.entity;
 
+import org.hibernate.annotations.BatchSize;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,12 +40,16 @@ public class Order {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @BatchSize(size = 50)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
 
     
 

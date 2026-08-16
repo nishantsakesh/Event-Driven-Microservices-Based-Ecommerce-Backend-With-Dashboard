@@ -42,6 +42,10 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public long getProductCount() {
+        return productRepository.count();
+    }
+
     public List<Product> getAllProducts(String search, String category) {
         List<Product> products = productRepository.findAll();
         return products.stream()
@@ -126,6 +130,15 @@ public class ProductService {
 
         return productRepository.save(product);
 
+    }
+
+    public Product incrementStock(Long productId, Integer quantity) {
+        Product product = getProductById(productId);
+
+        product.setQuantity(product.getQuantity() + quantity);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        return productRepository.save(product);
     }
 
 }

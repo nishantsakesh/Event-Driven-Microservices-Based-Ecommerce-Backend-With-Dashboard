@@ -31,4 +31,6 @@ public class OrderResponse {
 
     private LocalDateTime updatedAt;
 
+    private String paymentMethod;
+
 }
