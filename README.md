@@ -267,7 +267,7 @@ cd backend/payment-service && ./mvnw test
 ```
 
 ---
-
+<!--
 ## ⚡ Performance Tuning & Optimization
 
 1. **N+1 Query Elimination:** `OrderRepository` uses explicit JPQL `JOIN FETCH`, `@EntityGraph`, and `@BatchSize(size = 50)` on line items to eliminate round-trip query storms.
@@ -277,3 +277,4 @@ cd backend/payment-service && ./mvnw test
 5. **Redis Cache-Aside:** Product catalog lookups cached in Redis with instant `@CacheEvict` invalidation on writes.
 
 ---
+-->
