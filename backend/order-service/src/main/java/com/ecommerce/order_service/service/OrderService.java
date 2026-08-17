@@ -6,15 +6,18 @@ import com.ecommerce.common.events.OrderItemEvent;
 import com.ecommerce.order_service.dto.*;
 import com.ecommerce.order_service.entity.Order;
 import com.ecommerce.order_service.entity.OrderItem;
+import com.ecommerce.order_service.repository.OrderItemRepository;
 import com.ecommerce.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +25,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final RestTemplate restTemplate;
     private final RabbitTemplate rabbitTemplate;
 
@@ -45,52 +50,65 @@ public class OrderService {
             );
         }
 
-        List<OrderItem> mergedItems = productQuantities.entrySet().stream()
-                .map(entry -> {
-                    ProductResponse product = getProduct(entry.getKey());
-                    return OrderItem.builder()
-                            .productId(product.getId())
-                            .productName(product.getName())
-                            .quantity(entry.getValue())
-                            .unitPrice(product.getPrice())
-                            .imageUrl(product.getImageUrl())
-                            .build();
-                })
-                .collect(Collectors.toList());
+        BigDecimal total = BigDecimal.ZERO;
+        List<OrderItem> items = new ArrayList<>();
 
-        BigDecimal totalAmount = mergedItems.stream()
-                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (Map.Entry<Long, Integer> entry : productQuantities.entrySet()) {
+            Long productId = entry.getKey();
+            Integer quantity = entry.getValue();
+
+            ProductResponse product = getProduct(productId);
+
+            if (product.getQuantity() != null && product.getQuantity() < quantity) {
+                throw new RuntimeException("Insufficient stock for product: " + product.getName() +
+                        ". Available: " + product.getQuantity() + ", Requested: " + quantity);
+            }
+
+            BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+            total = total.add(itemTotal);
+
+            OrderItem orderItem = OrderItem.builder()
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .quantity(quantity)
+                    .unitPrice(product.getPrice())
+                    .imageUrl(product.getImageUrl())
+                    .build();
+
+            items.add(orderItem);
+        }
 
         Order order = Order.builder()
                 .userId(request.getUserId())
-                .totalAmount(totalAmount)
+                .totalAmount(total)
                 .status(OrderStatus.PAYMENT_PENDING)
                 .createdAt(LocalDateTime.now())
                 .paymentMethod(request.getPaymentMethod())
                 .build();
 
-        for (OrderItem item : mergedItems) {
-            order.getItems().add(item);
+        for (OrderItem item : items) {
             item.setOrder(order);
         }
 
+        order.setItems(items);
+
         order = orderRepository.save(order);
+
+        List<OrderItemEvent> itemEvents = items.stream()
+                .map(item -> OrderItemEvent.builder()
+                        .productId(item.getProductId())
+                        .productName(item.getProductName())
+                        .quantity(item.getQuantity())
+                        .unitPrice(item.getUnitPrice())
+                        .build())
+                .collect(Collectors.toList());
 
         OrderCreatedEvent event = OrderCreatedEvent.builder()
                 .orderId(order.getId())
                 .userId(order.getUserId())
                 .totalAmount(order.getTotalAmount())
-                .orderStatus(order.getStatus())
                 .paymentMethod(order.getPaymentMethod())
-                .createdAt(order.getCreatedAt())
-                .items(order.getItems().stream()
-                        .map(i -> new OrderItemEvent(
-                                i.getProductId(),
-                                i.getProductName(),
-                                i.getQuantity(),
-                                i.getUnitPrice()
-                        )).collect(Collectors.toList()))
+                .items(itemEvents)
                 .build();
 
         rabbitTemplate.convertAndSend(
@@ -128,9 +146,14 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         order.setUpdatedAt(LocalDateTime.now());
 
-        orderRepository.save(order);
+        order = orderRepository.save(order);
 
-        for (OrderItem item : order.getItems()) {
+        List<OrderItem> orderItems = order.getItems();
+        if (orderItems == null || orderItems.isEmpty()) {
+            orderItems = orderItemRepository.findByOrderId(order.getId());
+        }
+
+        for (OrderItem item : orderItems) {
             try {
                 restTemplate.put(
                         productServiceUrl + "/api/products/" + item.getProductId() + "/increment-stock/" + item.getQuantity(),
@@ -145,7 +168,7 @@ public class OrderService {
 
     }
 
-    public void updateOrderStatus(Long orderId, OrderStatus newStatus) {
+    public OrderResponse updateOrderStatus(Long orderId, OrderStatus newStatus) {
 
         Order order = orderRepository
                 .findById(orderId)
@@ -154,8 +177,8 @@ public class OrderService {
         order.setStatus(newStatus);
         order.setUpdatedAt(LocalDateTime.now());
 
-        orderRepository.save(order);
-
+        order = orderRepository.save(order);
+        return toResponse(order);
     }
 
     public void markCodAsPaid(Long orderId) {
@@ -187,6 +210,25 @@ public class OrderService {
     }
 
     private OrderResponse toResponse(Order order) {
+        List<OrderItem> items = null;
+        try {
+            items = order.getItems();
+            if (items != null) {
+                items.size();
+            }
+        } catch (Exception e) {
+            items = null;
+        }
+
+        if (items == null || items.isEmpty()) {
+            if (order.getId() != null) {
+                items = orderItemRepository.findByOrderId(order.getId());
+            }
+        }
+
+        List<OrderItemResponse> itemResponses = items != null
+                ? items.stream().map(this::toItemResponse).collect(Collectors.toList())
+                : new ArrayList<>();
 
         return OrderResponse.builder()
                 .id(order.getId())
@@ -195,11 +237,8 @@ public class OrderService {
                 .status(order.getStatus())
                 .createdAt(order.getCreatedAt())
                 .paymentMethod(order.getPaymentMethod())
-                .items(order.getItems().stream()
-                        .map(this::toItemResponse)
-                        .collect(Collectors.toList()))
+                .items(itemResponses)
                 .build();
-
     }
 
     private OrderItemResponse toItemResponse(OrderItem item) {

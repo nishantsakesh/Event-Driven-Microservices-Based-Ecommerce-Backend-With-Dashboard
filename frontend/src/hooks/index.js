@@ -309,7 +309,9 @@ export function useUpdateOrderStatus() {
       qc.invalidateQueries({ queryKey: QUERY_KEYS.DASHBOARD });
       toast.success("Order status updated!");
     },
-    onError: (err) =>
-      toast.error(err.response?.data?.message || "Failed to update status"),
+    onError: (err) => {
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Failed to update status";
+      toast.error(msg);
+    },
   });
 }

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useOrders, useCancelOrder, useMarkCodPaid, useUpdateOrderStatus } from '@/hooks';
+import { useOrders, useCancelOrder, useMarkCodPaid } from '@/hooks';
 import { formatPrice, formatDate } from '@/lib/utils';
-import { toast } from 'sonner';
 import { Filter, ChevronDown, ChevronUp, XCircle, Eye, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -12,7 +11,6 @@ export default function Orders() {
   const { data: orders = [], isLoading } = useOrders();
   const cancelOrder = useCancelOrder();
   const markCodPaid = useMarkCodPaid();
-  const updateStatus = useUpdateOrderStatus();
 
   const filteredOrders = statusFilter === 'ALL' 
     ? orders 
@@ -42,16 +40,58 @@ export default function Orders() {
     }
   };
 
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      await updateStatus.mutateAsync({ id: orderId, status: newStatus });
-    } catch (error) {
-      console.error(error);
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'ORDER_CONFIRMED':
+      case 'CONFIRMED':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            Order Confirmed
+          </span>
+        );
+      case 'PAID':
+      case 'PAYMENT_COMPLETED':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/20">
+            Paid
+          </span>
+        );
+      case 'SHIPPED':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+            Shipped
+          </span>
+        );
+      case 'DELIVERED':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+            Delivered
+          </span>
+        );
+      case 'CANCELLED':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/20">
+            Cancelled
+          </span>
+        );
+      case 'PAYMENT_FAILED':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+            Payment Failed
+          </span>
+        );
+      case 'PAYMENT_PENDING':
+      case 'PENDING':
+      default:
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+            Payment Pending
+          </span>
+        );
     }
   };
 
   const statusOptions = ['ALL', 'PAYMENT_PENDING', 'ORDER_CONFIRMED', 'PAID', 'PAYMENT_COMPLETED', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'PAYMENT_FAILED'];
-  const updateStatusOptions = ['PAYMENT_PENDING', 'ORDER_CONFIRMED', 'PAID', 'PAYMENT_COMPLETED', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
   return (
     <div className="space-y-6">
@@ -108,25 +148,8 @@ export default function Orders() {
                       <td className="px-4 sm:px-6 py-4 hidden md:table-cell">{String(order.userId).slice(0, 8)}...</td>
                       <td className="px-4 sm:px-6 py-4 hidden md:table-cell">{formatDate(order.createdAt)}</td>
                       <td className="px-4 sm:px-6 py-4 font-semibold text-gray-900 dark:text-white">{formatPrice(order.totalAmount)}</td>
-                      <td className="px-4 sm:px-6 py-4" onClick={(e) => e.stopPropagation()}>
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium outline-none cursor-pointer appearance-none border-0
-                            ${order.status === 'PAYMENT_PENDING' || order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' : ''}
-                            ${order.status === 'PAID' || order.status === 'PAYMENT_COMPLETED' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : ''}
-                            ${order.status === 'ORDER_CONFIRMED' || order.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : ''}
-                            ${order.status === 'SHIPPED' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' : ''}
-                            ${order.status === 'DELIVERED' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : ''}
-                            ${order.status === 'CANCELLED' || order.status === 'PAYMENT_FAILED' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : ''}
-                          `}
-                        >
-                          {updateStatusOptions.map(opt => (
-                            <option key={opt} value={opt} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
+                      <td className="px-4 sm:px-6 py-4">
+                        {getStatusBadge(order.status)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">

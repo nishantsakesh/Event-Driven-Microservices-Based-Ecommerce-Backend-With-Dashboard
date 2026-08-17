@@ -26,7 +26,7 @@ export const orderService = {
   getByUser: (userId) => apiClient.get(`${API.ORDERS}/user/${userId}`),
   create: (data) => apiClient.post(API.ORDERS, data),
   cancel: (id) => apiClient.delete(`${API.ORDERS}/${id}`),
-  updateStatus: (id, status) => apiClient.patch(`${API.ORDERS}/${id}/status`, null, { params: { status } }),
+  updateStatus: (id, status) => apiClient.patch(`${API.ORDERS}/${id}/status`, { status }, { params: { status } }),
   markCodAsPaid: (id) => apiClient.patch(`${API.ORDERS}/${id}/mark-cod-paid`),
 };
 

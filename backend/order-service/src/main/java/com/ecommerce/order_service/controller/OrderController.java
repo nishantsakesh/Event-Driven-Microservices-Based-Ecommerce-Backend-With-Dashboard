@@ -1,7 +1,9 @@
 package com.ecommerce.order_service.controller;
 
+import com.ecommerce.common.enums.OrderStatus;
 import com.ecommerce.order_service.dto.OrderRequest;
 import com.ecommerce.order_service.dto.OrderResponse;
+import com.ecommerce.order_service.dto.OrderStatusUpdateRequest;
 import com.ecommerce.order_service.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -73,13 +75,22 @@ public class OrderController {
         return ResponseEntity.ok("Order marked as PAID successfully");
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<String> updateOrderStatus(
+    @RequestMapping(value = "/{id}/status", method = {RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.POST})
+    public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable Long id,
-            @RequestParam com.ecommerce.common.enums.OrderStatus status) {
+            @RequestParam(required = false) OrderStatus status,
+            @RequestBody(required = false) OrderStatusUpdateRequest request) {
 
-        orderService.updateOrderStatus(id, status);
-        return ResponseEntity.ok("Order status updated successfully");
+        OrderStatus finalStatus = status;
+        if (finalStatus == null && request != null && request.getStatus() != null) {
+            finalStatus = request.getStatus();
+        }
+        if (finalStatus == null) {
+            throw new IllegalArgumentException("Status parameter is required");
+        }
+
+        OrderResponse updated = orderService.updateOrderStatus(id, finalStatus);
+        return ResponseEntity.ok(updated);
     }
 
 }

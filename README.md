@@ -42,6 +42,7 @@ The architecture features a **Choreographed Distributed Saga** over **RabbitMQ**
 - **HTML Tax Invoice & Notification Engine:** Resolves customer name and email from `auth-service` via REST, constructs branded HTML tax invoices, and dispatches them asynchronously with fallback logging.
 - **Storefront Newsletter & Admin Subscriber Hub:** Public subscription form in the storefront footer wired to `notification-service` with active subscriber management in the Admin Dashboard.
 - **Executive Analytics Dashboard:** Single-call SQL aggregator endpoint in `order-service` computing revenue KPIs, order status distribution, and daily sales trends in under 50ms.
+- **Order Lifecycle & Admin Status Management:** Orders transition through discrete distributed saga phases (`PAYMENT_PENDING`, `ORDER_CONFIRMED`, `PAID`, `SHIPPED`, `DELIVERED`, `CANCELLED`). The admin management console presents color-coded Status Badges with distinct lifecycle triggers (`View Details`, `Mark COD as Paid`, `Cancel Order`), maintaining domain consistency and eliminating 403 CSRF issues.
 - **Redis 2-Layer Cache-Aside:** In-memory caching on hot catalog lookups (`@Cacheable`) with immediate cache invalidation (`@CacheEvict`) on writes.
 
 ---
@@ -69,11 +70,11 @@ flowchart TB
     end
 
     subgraph Messaging ["Asynchronous Event Mesh"]
-        RabbitMQ[("🐇 RabbitMQ Broker\nTopic Exchange: ecommerce.exchange")]
+        RabbitMQ[("🐇 RabbitMQ Broker<br/>Topic Exchange: ecommerce.exchange")]
     end
 
     subgraph PersistenceLayer ["Persistent & In-Memory Stores"]
-        Postgres[("🐘 PostgreSQL 17 (6 Isolated DBs)\nauth_db, product_db, order_db,\ninventory_db, payment_db, notification_db")]
+        Postgres[("🐘 PostgreSQL 17 (6 Isolated DBs)<br/>auth_db, product_db, order_db,<br/>inventory_db, payment_db, notification_db")]
         Redis[("⚡ Redis 7 In-Memory Cache")]
     end
 
@@ -95,16 +96,17 @@ flowchart TB
     NotifSvc <--> Postgres
 
     OrderSvc -.->|order.created| RabbitMQ
-    RabbitMQ -.->|order.created| InventorySvc
-    InventorySvc -.->|inventory.reserved| RabbitMQ
-    InventorySvc -.->|inventory.failed| RabbitMQ
-    RabbitMQ -.->|inventory.reserved| PaymentSvc
-    RabbitMQ -.->|inventory.reserved| OrderSvc
-    RabbitMQ -.->|inventory.reserved| NotifSvc
+    RabbitMQ -.->|order.created| PaymentSvc
     PaymentSvc -.->|payment.success| RabbitMQ
     PaymentSvc -.->|payment.failed| RabbitMQ
-    RabbitMQ -.->|payment.success / failed| OrderSvc
-    RabbitMQ -.->|payment.failed (Rollback)| InventorySvc
+    RabbitMQ -.->|payment.failed| OrderSvc
+    RabbitMQ -.->|payment.success| InvSvc
+    InvSvc -.->|inventory.reserved| RabbitMQ
+    InvSvc -.->|inventory.failed| RabbitMQ
+    RabbitMQ -.->|inventory.reserved| NotifSvc
+    RabbitMQ -.->|inventory.reserved| OrderSvc
+    RabbitMQ -.->|"inventory.failed (Refund)"| PaymentSvc
+    RabbitMQ -.->|inventory.failed| OrderSvc
 ```
 
 ---
@@ -118,47 +120,37 @@ sequenceDiagram
     participant Gateway as ⚡ API Gateway (8888)
     participant OrderSvc as 🛒 Order Service (8083)
     participant Rabbit as 🐇 RabbitMQ (ecommerce.exchange)
-    participant InvSvc as 🏭 Inventory Service (8084)
     participant PaySvc as 💳 Payment Service (8085)
+    participant InvSvc as 🏭 Inventory Service (8084)
     participant NotifSvc as ✉️ Notification Service (8087)
 
     Customer->>Gateway: POST /api/orders (items, address, paymentMethod)
     Gateway->>OrderSvc: Forward request
-    Note over OrderSvc: 1. Validate items & compute totals<br/>2. Save Order to order_db with status=CREATED<br/>3. Publish OrderCreatedEvent
+    Note over OrderSvc: 1. Validate items & compute totals<br/>2. Save Order in order_db (status=PAYMENT_PENDING)<br/>3. Publish OrderCreatedEvent
     OrderSvc->>Rabbit: Publish: order.created
     OrderSvc-->>Customer: HTTP 201 Created (Order Placed)
 
-    Rabbit->>InvSvc: Route order.created to inventory queue
-    Note over InvSvc: 1. Check stock for each line item<br/>2. If available: deduct quantity & save<br/>3. If not: abort reservation
-    alt Sufficient Stock Available
-        InvSvc->>Rabbit: Publish: inventory.reserved
+    Rabbit->>PaySvc: Route order.created to payment queue
+    Note over PaySvc: 1. Check idempotency (findByOrderId)<br/>2. Execute payment gateway logic<br/>3. Save payment record in payment_db
+    alt Payment Succeeded
+        PaySvc->>Rabbit: Publish: payment.success
         
-        par Trigger Payment
-            Rabbit->>PaySvc: Route inventory.reserved
-            Note over PaySvc: 1. Process payment transaction<br/>2. Save payment record in payment_db<br/>3. Publish PaymentSuccessEvent
-            PaySvc->>Rabbit: Publish: payment.success
-        and Update Order Status
-            Rabbit->>OrderSvc: Route inventory.reserved
-            Note over OrderSvc: Update Order status to INVENTORY_RESERVED
-        and Generate Tax Invoice
-            Rabbit->>NotifSvc: Route inventory.reserved
-            Note over NotifSvc: 1. Fetch User details from auth-service<br/>2. Build branded HTML invoice<br/>3. Send email & save notification record
+        Rabbit->>InvSvc: Route payment.success
+        Note over InvSvc: 1. Call product-service /reduce-stock<br/>2. Record inventory transaction in inventory_db
+        
+        alt Inventory Stock Reserved
+            InvSvc->>Rabbit: Publish: inventory.reserved
+            Rabbit->>OrderSvc: Route inventory.reserved (Update status to ORDER_CONFIRMED)
+            Rabbit->>NotifSvc: Route inventory.reserved (Generate & send HTML tax invoice)
+        else Insufficient Stock
+            InvSvc->>Rabbit: Publish: inventory.failed
+            Rabbit->>PaySvc: Route inventory.failed (Compensating Refund)
+            Rabbit->>OrderSvc: Route inventory.failed (Update status to CANCELLED)
         end
 
-        Rabbit->>OrderSvc: Route payment.success
-        Note over OrderSvc: Update Order status to PAYMENT_COMPLETED / ORDER_CONFIRMED
-    else Stock Insufficient (Out of Stock)
-        InvSvc->>Rabbit: Publish: inventory.failed
-        Rabbit->>OrderSvc: Route inventory.failed
-        Note over OrderSvc: Update Order status to CANCELLED
-        Rabbit->>NotifSvc: Route inventory.failed
-        Note over NotifSvc: Send cancellation alert to customer
-    end
-
-    alt Payment Processing Fails
+    else Payment Declined
         PaySvc->>Rabbit: Publish: payment.failed
-        Rabbit->>OrderSvc: Route payment.failed -> Update Order status to CANCELLED
-        Rabbit->>InvSvc: Route payment.failed -> Rollback reserved inventory (+qty)
+        Rabbit->>OrderSvc: Route payment.failed (Update status to PAYMENT_FAILED)
     end
 ```
 
@@ -285,5 +277,3 @@ cd backend/payment-service && ./mvnw test
 5. **Redis Cache-Aside:** Product catalog lookups cached in Redis with instant `@CacheEvict` invalidation on writes.
 
 ---
-
-*Authored by Senior Java Solutions Architect & Distributed Systems Engineer for AudioHub Enterprise.*
